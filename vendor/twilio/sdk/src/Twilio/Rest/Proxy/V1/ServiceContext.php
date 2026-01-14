@@ -23,20 +23,24 @@ use Twilio\Options;
 use Twilio\Values;
 use Twilio\Version;
 use Twilio\InstanceContext;
-use Twilio\Rest\Proxy\V1\Service\SessionList;
 use Twilio\Rest\Proxy\V1\Service\PhoneNumberList;
+use Twilio\Rest\Proxy\V1\Service\ShortCodeList;
+use Twilio\Rest\Proxy\V1\Service\SessionList;
 
 
 /**
- * @property SessionList $sessions
  * @property PhoneNumberList $phoneNumbers
+ * @property ShortCodeList $shortCodes
+ * @property SessionList $sessions
  * @method \Twilio\Rest\Proxy\V1\Service\SessionContext sessions(string $sid)
+ * @method \Twilio\Rest\Proxy\V1\Service\ShortCodeContext shortCodes(string $sid)
  * @method \Twilio\Rest\Proxy\V1\Service\PhoneNumberContext phoneNumbers(string $sid)
  */
 class ServiceContext extends InstanceContext
     {
-    protected $_sessions;
     protected $_phoneNumbers;
+    protected $_shortCodes;
+    protected $_sessions;
 
     /**
      * Initialize the ServiceContext
@@ -69,8 +73,7 @@ class ServiceContext extends InstanceContext
     public function delete(): bool
     {
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded' ]);
-        return $this->version->delete('DELETE', $this->uri, [], [], $headers);
+        return $this->version->delete('DELETE', $this->uri);
     }
 
 
@@ -83,8 +86,7 @@ class ServiceContext extends InstanceContext
     public function fetch(): ServiceInstance
     {
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->fetch('GET', $this->uri, [], [], $headers);
+        $payload = $this->version->fetch('GET', $this->uri, [], []);
 
         return new ServiceInstance(
             $this->version,
@@ -125,8 +127,7 @@ class ServiceContext extends InstanceContext
                 $options['chatInstanceSid'],
         ]);
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->update('POST', $this->uri, [], $data, $headers);
+        $payload = $this->version->update('POST', $this->uri, [], $data);
 
         return new ServiceInstance(
             $this->version,
@@ -135,21 +136,6 @@ class ServiceContext extends InstanceContext
         );
     }
 
-
-    /**
-     * Access the sessions
-     */
-    protected function getSessions(): SessionList
-    {
-        if (!$this->_sessions) {
-            $this->_sessions = new SessionList(
-                $this->version,
-                $this->solution['sid']
-            );
-        }
-
-        return $this->_sessions;
-    }
 
     /**
      * Access the phoneNumbers
@@ -164,6 +150,36 @@ class ServiceContext extends InstanceContext
         }
 
         return $this->_phoneNumbers;
+    }
+
+    /**
+     * Access the shortCodes
+     */
+    protected function getShortCodes(): ShortCodeList
+    {
+        if (!$this->_shortCodes) {
+            $this->_shortCodes = new ShortCodeList(
+                $this->version,
+                $this->solution['sid']
+            );
+        }
+
+        return $this->_shortCodes;
+    }
+
+    /**
+     * Access the sessions
+     */
+    protected function getSessions(): SessionList
+    {
+        if (!$this->_sessions) {
+            $this->_sessions = new SessionList(
+                $this->version,
+                $this->solution['sid']
+            );
+        }
+
+        return $this->_sessions;
     }
 
     /**

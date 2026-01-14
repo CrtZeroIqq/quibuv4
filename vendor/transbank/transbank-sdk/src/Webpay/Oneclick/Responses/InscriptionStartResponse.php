@@ -2,8 +2,6 @@
 
 namespace Transbank\Webpay\Oneclick\Responses;
 
-use Transbank\Utils\Utils;
-
 class InscriptionStartResponse
 {
     public $token;
@@ -11,8 +9,10 @@ class InscriptionStartResponse
 
     public function __construct($json)
     {
-        $this->token = Utils::returnValueIfExists($json, 'token');
-        $this->urlWebpay = Utils::returnValueIfExists($json, 'url_webpay');
+        $token = $json['token'];
+        $urlWebpay = $json['url_webpay'];
+        $this->setToken($token);
+        $this->setUrlWebpay($urlWebpay);
     }
 
     public function getRedirectUrl()

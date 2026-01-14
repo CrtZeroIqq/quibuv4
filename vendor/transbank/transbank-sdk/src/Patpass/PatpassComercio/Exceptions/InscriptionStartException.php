@@ -8,7 +8,7 @@
 
 namespace Transbank\Patpass\PatpassComercio\Exceptions;
 
-use Transbank\Patpass\Exceptions\PatpassException;
+use Transbank\PatPass\Exceptions\PatpassException;
 
 class InscriptionStartException extends PatpassException
 {

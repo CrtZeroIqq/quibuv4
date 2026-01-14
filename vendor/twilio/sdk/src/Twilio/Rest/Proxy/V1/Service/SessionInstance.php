@@ -23,8 +23,8 @@ use Twilio\Options;
 use Twilio\Values;
 use Twilio\Version;
 use Twilio\Deserialize;
-use Twilio\Rest\Proxy\V1\Service\Session\InteractionList;
 use Twilio\Rest\Proxy\V1\Service\Session\ParticipantList;
+use Twilio\Rest\Proxy\V1\Service\Session\InteractionList;
 
 
 /**
@@ -38,7 +38,7 @@ use Twilio\Rest\Proxy\V1\Service\Session\ParticipantList;
  * @property string|null $uniqueName
  * @property string $status
  * @property string|null $closedReason
- * @property int $ttl
+ * @property int|null $ttl
  * @property string $mode
  * @property \DateTime|null $dateCreated
  * @property \DateTime|null $dateUpdated
@@ -47,8 +47,8 @@ use Twilio\Rest\Proxy\V1\Service\Session\ParticipantList;
  */
 class SessionInstance extends InstanceResource
 {
-    protected $_interactions;
     protected $_participants;
+    protected $_interactions;
 
     /**
      * Initialize the SessionInstance
@@ -58,7 +58,7 @@ class SessionInstance extends InstanceResource
      * @param string $serviceSid The SID of the parent [Service](https://www.twilio.com/docs/proxy/api/service) resource.
      * @param string $sid The Twilio-provided string that uniquely identifies the Session resource to delete.
      */
-    public function __construct(Version $version, array $payload, string $serviceSid, ?string $sid = null)
+    public function __construct(Version $version, array $payload, string $serviceSid, string $sid = null)
     {
         parent::__construct($version);
 
@@ -142,19 +142,19 @@ class SessionInstance extends InstanceResource
     }
 
     /**
-     * Access the interactions
-     */
-    protected function getInteractions(): InteractionList
-    {
-        return $this->proxy()->interactions;
-    }
-
-    /**
      * Access the participants
      */
     protected function getParticipants(): ParticipantList
     {
         return $this->proxy()->participants;
+    }
+
+    /**
+     * Access the interactions
+     */
+    protected function getInteractions(): InteractionList
+    {
+        return $this->proxy()->interactions;
     }
 
     /**

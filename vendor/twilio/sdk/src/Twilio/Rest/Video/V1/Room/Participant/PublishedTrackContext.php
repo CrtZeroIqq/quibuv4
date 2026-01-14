@@ -18,7 +18,6 @@
 namespace Twilio\Rest\Video\V1\Room\Participant;
 
 use Twilio\Exceptions\TwilioException;
-use Twilio\Values;
 use Twilio\Version;
 use Twilio\InstanceContext;
 
@@ -66,8 +65,7 @@ class PublishedTrackContext extends InstanceContext
     public function fetch(): PublishedTrackInstance
     {
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->fetch('GET', $this->uri, [], [], $headers);
+        $payload = $this->version->fetch('GET', $this->uri, [], []);
 
         return new PublishedTrackInstance(
             $this->version,

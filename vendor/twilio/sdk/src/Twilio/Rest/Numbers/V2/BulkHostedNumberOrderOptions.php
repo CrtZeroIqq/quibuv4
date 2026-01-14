@@ -20,7 +20,6 @@ use Twilio\Values;
 
 abstract class BulkHostedNumberOrderOptions
 {
-
     /**
      * @param string $orderStatus Order status can be used for filtering on Hosted Number Order status values. To see a complete list of order statuses, please check 'https://www.twilio.com/docs/phone-numbers/hosted-numbers/hosted-numbers-api/hosted-number-order-resource#status-values'.
      * @return FetchBulkHostedNumberOrderOptions Options builder
@@ -37,7 +36,6 @@ abstract class BulkHostedNumberOrderOptions
     }
 
 }
-
 
 class FetchBulkHostedNumberOrderOptions extends Options
     {

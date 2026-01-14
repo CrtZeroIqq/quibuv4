@@ -73,7 +73,8 @@ class UserContext extends InstanceContext
 
         $options = new Values($options);
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded' , 'X-Twilio-Webhook-Enabled' => $options['xTwilioWebhookEnabled']]);
+        $headers = Values::of(['X-Twilio-Webhook-Enabled' => $options['xTwilioWebhookEnabled']]);
+
         return $this->version->delete('DELETE', $this->uri, [], [], $headers);
     }
 
@@ -87,8 +88,7 @@ class UserContext extends InstanceContext
     public function fetch(): UserInstance
     {
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->fetch('GET', $this->uri, [], [], $headers);
+        $payload = $this->version->fetch('GET', $this->uri, [], []);
 
         return new UserInstance(
             $this->version,
@@ -120,7 +120,8 @@ class UserContext extends InstanceContext
                 $options['roleSid'],
         ]);
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' , 'X-Twilio-Webhook-Enabled' => $options['xTwilioWebhookEnabled']]);
+        $headers = Values::of(['X-Twilio-Webhook-Enabled' => $options['xTwilioWebhookEnabled']]);
+
         $payload = $this->version->update('POST', $this->uri, [], $data, $headers);
 
         return new UserInstance(

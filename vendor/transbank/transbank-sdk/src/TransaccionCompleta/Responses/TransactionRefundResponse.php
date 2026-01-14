@@ -15,12 +15,18 @@ class TransactionRefundResponse
 
     public function __construct($json)
     {
-        $this->type = Utils::returnValueIfExists($json, 'type');
-        $this->authorizationCode = Utils::returnValueIfExists($json, 'authorization_code');
-        $this->authorizationDate = Utils::returnValueIfExists($json, 'authorization_date');
-        $this->nullifiedAmount = Utils::returnValueIfExists($json, 'nullified_amount');
-        $this->balance = Utils::returnValueIfExists($json, 'balance');
-        $this->responseCode = Utils::returnValueIfExists($json, 'response_code');
+        $type = Utils::returnValueIfExists($json, 'type');
+        $this->setType($type);
+        $authorizationCode = Utils::returnValueIfExists($json, 'authorization_code');
+        $this->setAuthorizationCode($authorizationCode);
+        $authorizationDate = Utils::returnValueIfExists($json, 'authorization_date');
+        $this->setAuthorizationDate($authorizationDate);
+        $nullifiedAmount = Utils::returnValueIfExists($json, 'nullified_amount');
+        $this->setNullifiedAmount($nullifiedAmount);
+        $balance = Utils::returnValueIfExists($json, 'balance');
+        $this->setBalance($balance);
+        $responseCode = Utils::returnValueIfExists($json, 'response_code');
+        $this->setResponseCode($responseCode);
     }
 
     /**

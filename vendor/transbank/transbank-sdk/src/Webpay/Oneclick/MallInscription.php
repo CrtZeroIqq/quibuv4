@@ -56,13 +56,8 @@ class MallInscription
                 static::INSCRIPTION_START_ENDPOINT,
                 $payload
             );
-        } catch (WebpayRequestException $exception) {
-            throw new InscriptionStartException($exception->getMessage(),
-                $exception->getTransbankErrorMessage(),
-                $exception->getHttpCode(),
-                $exception->getFailedRequest(),
-                $exception
-            );
+        } catch (WebpayRequestException $e) {
+            throw InscriptionStartException::raise($e);
         }
 
         return new InscriptionStartResponse($response);
@@ -76,13 +71,8 @@ class MallInscription
                 str_replace('{token}', $token, static::INSCRIPTION_FINISH_ENDPOINT),
                 null
             );
-        } catch (WebpayRequestException $exception) {
-            throw new InscriptionFinishException($exception->getMessage(),
-                $exception->getTransbankErrorMessage(),
-                $exception->getHttpCode(),
-                $exception->getFailedRequest(),
-                $exception
-            );
+        } catch (WebpayRequestException $e) {
+            throw InscriptionFinishException::raise($e);
         }
 
         return new InscriptionFinishResponse($response);
@@ -101,17 +91,12 @@ class MallInscription
                 static::INSCRIPTION_DELETE_ENDPOINT,
                 $payload
             );
-        } catch (WebpayRequestException $exception) {
-            if ($exception->getHttpCode() !== 204) {
-                return new InscriptionDeleteResponse(false, $exception->getHttpCode());
+        } catch (WebpayRequestException $e) {
+            if ($e->getHttpCode() !== 204) {
+                return new InscriptionDeleteResponse(false, $e->getHttpCode());
             }
 
-            throw new InscriptionDeleteException($exception->getMessage(),
-                $exception->getTransbankErrorMessage(),
-                $exception->getHttpCode(),
-                $exception->getFailedRequest(),
-                $exception
-            );
+            throw InscriptionDeleteException::raise($e);
         }
 
         return new InscriptionDeleteResponse(true);

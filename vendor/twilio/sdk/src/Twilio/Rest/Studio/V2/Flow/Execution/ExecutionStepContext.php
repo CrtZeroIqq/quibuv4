@@ -19,7 +19,6 @@ namespace Twilio\Rest\Studio\V2\Flow\Execution;
 
 use Twilio\Exceptions\TwilioException;
 use Twilio\ListResource;
-use Twilio\Values;
 use Twilio\Version;
 use Twilio\InstanceContext;
 use Twilio\Rest\Studio\V2\Flow\Execution\ExecutionStep\ExecutionStepContextList;
@@ -74,8 +73,7 @@ class ExecutionStepContext extends InstanceContext
     public function fetch(): ExecutionStepInstance
     {
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->fetch('GET', $this->uri, [], [], $headers);
+        $payload = $this->version->fetch('GET', $this->uri, [], []);
 
         return new ExecutionStepInstance(
             $this->version,

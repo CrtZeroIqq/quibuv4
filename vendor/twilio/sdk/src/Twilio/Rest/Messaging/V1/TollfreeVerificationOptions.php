@@ -76,24 +76,18 @@ abstract class TollfreeVerificationOptions
     /**
      * @param string $tollfreePhoneNumberSid The SID of the Phone Number associated with the Tollfree Verification.
      * @param string $status The compliance status of the Tollfree Verification record.
-     * @param string $externalReferenceId Customer supplied reference id for the Tollfree Verification record.
-     * @param bool $includeSubAccounts Whether to include Tollfree Verifications from sub accounts in list response.
      * @return ReadTollfreeVerificationOptions Options builder
      */
     public static function read(
         
         string $tollfreePhoneNumberSid = Values::NONE,
-        string $status = Values::NONE,
-        string $externalReferenceId = Values::NONE,
-        bool $includeSubAccounts = Values::BOOL_NONE
+        string $status = Values::NONE
 
     ): ReadTollfreeVerificationOptions
     {
         return new ReadTollfreeVerificationOptions(
             $tollfreePhoneNumberSid,
-            $status,
-            $externalReferenceId,
-            $includeSubAccounts
+            $status
         );
     }
 
@@ -398,21 +392,15 @@ class ReadTollfreeVerificationOptions extends Options
     /**
      * @param string $tollfreePhoneNumberSid The SID of the Phone Number associated with the Tollfree Verification.
      * @param string $status The compliance status of the Tollfree Verification record.
-     * @param string $externalReferenceId Customer supplied reference id for the Tollfree Verification record.
-     * @param bool $includeSubAccounts Whether to include Tollfree Verifications from sub accounts in list response.
      */
     public function __construct(
         
         string $tollfreePhoneNumberSid = Values::NONE,
-        string $status = Values::NONE,
-        string $externalReferenceId = Values::NONE,
-        bool $includeSubAccounts = Values::BOOL_NONE
+        string $status = Values::NONE
 
     ) {
         $this->options['tollfreePhoneNumberSid'] = $tollfreePhoneNumberSid;
         $this->options['status'] = $status;
-        $this->options['externalReferenceId'] = $externalReferenceId;
-        $this->options['includeSubAccounts'] = $includeSubAccounts;
     }
 
     /**
@@ -436,30 +424,6 @@ class ReadTollfreeVerificationOptions extends Options
     public function setStatus(string $status): self
     {
         $this->options['status'] = $status;
-        return $this;
-    }
-
-    /**
-     * Customer supplied reference id for the Tollfree Verification record.
-     *
-     * @param string $externalReferenceId Customer supplied reference id for the Tollfree Verification record.
-     * @return $this Fluent Builder
-     */
-    public function setExternalReferenceId(string $externalReferenceId): self
-    {
-        $this->options['externalReferenceId'] = $externalReferenceId;
-        return $this;
-    }
-
-    /**
-     * Whether to include Tollfree Verifications from sub accounts in list response.
-     *
-     * @param bool $includeSubAccounts Whether to include Tollfree Verifications from sub accounts in list response.
-     * @return $this Fluent Builder
-     */
-    public function setIncludeSubAccounts(bool $includeSubAccounts): self
-    {
-        $this->options['includeSubAccounts'] = $includeSubAccounts;
         return $this;
     }
 

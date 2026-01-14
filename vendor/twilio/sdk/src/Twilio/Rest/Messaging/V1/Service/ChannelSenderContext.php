@@ -18,7 +18,6 @@
 namespace Twilio\Rest\Messaging\V1\Service;
 
 use Twilio\Exceptions\TwilioException;
-use Twilio\Values;
 use Twilio\Version;
 use Twilio\InstanceContext;
 
@@ -29,8 +28,8 @@ class ChannelSenderContext extends InstanceContext
      * Initialize the ChannelSenderContext
      *
      * @param Version $version Version that contains the resource
-     * @param string $messagingServiceSid The SID of the [Service](https://www.twilio.com/docs/chat/rest/service-resource) to create the resource under.
-     * @param string $sid The SID of the Channel Sender resource to delete.
+     * @param string $messagingServiceSid The SID of the [Service](https://www.twilio.com/docs/chat/rest/service-resource) to fetch the resource from.
+     * @param string $sid The SID of the ChannelSender resource to fetch.
      */
     public function __construct(
         Version $version,
@@ -53,20 +52,6 @@ class ChannelSenderContext extends InstanceContext
     }
 
     /**
-     * Delete the ChannelSenderInstance
-     *
-     * @return bool True if delete succeeds, false otherwise
-     * @throws TwilioException When an HTTP error occurs.
-     */
-    public function delete(): bool
-    {
-
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded' ]);
-        return $this->version->delete('DELETE', $this->uri, [], [], $headers);
-    }
-
-
-    /**
      * Fetch the ChannelSenderInstance
      *
      * @return ChannelSenderInstance Fetched ChannelSenderInstance
@@ -75,8 +60,7 @@ class ChannelSenderContext extends InstanceContext
     public function fetch(): ChannelSenderInstance
     {
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->fetch('GET', $this->uri, [], [], $headers);
+        $payload = $this->version->fetch('GET', $this->uri, [], []);
 
         return new ChannelSenderInstance(
             $this->version,

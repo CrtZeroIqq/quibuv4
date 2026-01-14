@@ -40,14 +40,14 @@ use Twilio\Base\PhoneNumberCapabilities;
  * @property string|null $failureReason
  * @property \DateTime|null $dateCreated
  * @property \DateTime|null $dateUpdated
- * @property int $verificationAttempts
+ * @property int|null $verificationAttempts
  * @property string|null $email
  * @property string[]|null $ccEmails
  * @property string|null $url
  * @property string $verificationType
  * @property string|null $verificationDocumentSid
  * @property string|null $extension
- * @property int $callDelay
+ * @property int|null $callDelay
  * @property string|null $verificationCode
  * @property string[]|null $verificationCallSids
  */
@@ -60,7 +60,7 @@ class HostedNumberOrderInstance extends InstanceResource
      * @param mixed[] $payload The response payload
      * @param string $sid A 34 character string that uniquely identifies this HostedNumberOrder.
      */
-    public function __construct(Version $version, array $payload, ?string $sid = null)
+    public function __construct(Version $version, array $payload, string $sid = null)
     {
         parent::__construct($version);
 

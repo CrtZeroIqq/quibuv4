@@ -39,13 +39,13 @@ use Twilio\Base\PhoneNumberCapabilities;
  * @property string|null $failureReason
  * @property \DateTime|null $dateCreated
  * @property \DateTime|null $dateUpdated
- * @property int $verificationAttempts
+ * @property int|null $verificationAttempts
  * @property string|null $email
  * @property string[]|null $ccEmails
  * @property string $verificationType
  * @property string|null $verificationDocumentSid
  * @property string|null $extension
- * @property int $callDelay
+ * @property int|null $callDelay
  * @property string|null $verificationCode
  * @property string[]|null $verificationCallSids
  */

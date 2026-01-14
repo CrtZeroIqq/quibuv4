@@ -42,7 +42,7 @@ use Twilio\Rest\Sync\V1\Service\SyncMapList;
  * @property bool|null $reachabilityWebhooksEnabled
  * @property bool|null $aclEnabled
  * @property bool|null $reachabilityDebouncingEnabled
- * @property int $reachabilityDebouncingWindow
+ * @property int|null $reachabilityDebouncingWindow
  * @property array|null $links
  */
 class ServiceInstance extends InstanceResource
@@ -59,7 +59,7 @@ class ServiceInstance extends InstanceResource
      * @param mixed[] $payload The response payload
      * @param string $sid The SID of the Service resource to delete.
      */
-    public function __construct(Version $version, array $payload, ?string $sid = null)
+    public function __construct(Version $version, array $payload, string $sid = null)
     {
         parent::__construct($version);
 

@@ -78,8 +78,7 @@ class WorkersStatisticsContext extends InstanceContext
                 $options['taskChannel'],
         ]);
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->fetch('GET', $this->uri, $params, [], $headers);
+        $payload = $this->version->fetch('GET', $this->uri, $params, []);
 
         return new WorkersStatisticsInstance(
             $this->version,

@@ -57,8 +57,7 @@ class TrunkContext extends InstanceContext
     public function fetch(): TrunkInstance
     {
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->fetch('GET', $this->uri, [], [], $headers);
+        $payload = $this->version->fetch('GET', $this->uri, [], []);
 
         return new TrunkInstance(
             $this->version,
@@ -87,8 +86,7 @@ class TrunkContext extends InstanceContext
                 $options['friendlyName'],
         ]);
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->update('POST', $this->uri, [], $data, $headers);
+        $payload = $this->version->update('POST', $this->uri, [], $data);
 
         return new TrunkInstance(
             $this->version,

@@ -27,12 +27,12 @@ use Twilio\Version;
 /**
  * @property string|null $accountSid
  * @property array[]|null $activityStatistics
- * @property int $longestTaskWaitingAge
+ * @property int|null $longestTaskWaitingAge
  * @property string|null $longestTaskWaitingSid
  * @property array|null $tasksByPriority
  * @property array|null $tasksByStatus
- * @property int $totalTasks
- * @property int $totalWorkers
+ * @property int|null $totalTasks
+ * @property int|null $totalWorkers
  * @property string|null $workspaceSid
  * @property string|null $url
  */

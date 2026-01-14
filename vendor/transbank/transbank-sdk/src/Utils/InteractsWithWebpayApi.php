@@ -3,6 +3,7 @@
 namespace Transbank\Utils;
 
 use Transbank\Contracts\RequestService;
+use Transbank\Webpay\Exceptions\WebpayRequestException;
 use Transbank\Webpay\Options;
 
 /**
@@ -40,7 +41,7 @@ trait InteractsWithWebpayApi
      * @param $endpoint
      * @param array|null $payload
      *
-     * @throws Transbank\Webpay\Exceptions\WebpayRequestException
+     * @throws WebpayRequestException
      *
      * @return mixed
      */
@@ -56,6 +57,8 @@ trait InteractsWithWebpayApi
 
     /**
      * @param Options $options
+     *
+     * @return $this
      */
     public function loadOptions(Options $options = null)
     {
@@ -70,6 +73,8 @@ trait InteractsWithWebpayApi
         }
 
         $this->setOptions($options);
+
+        return $this;
     }
 
     /**
@@ -86,6 +91,8 @@ trait InteractsWithWebpayApi
     public function setOptions(Options $options)
     {
         $this->options = $options;
+
+        return $this;
     }
 
     /**
@@ -102,6 +109,8 @@ trait InteractsWithWebpayApi
     public function setRequestService(RequestService $requestService = null)
     {
         $this->requestService = $requestService;
+
+        return $this;
     }
 
     /**

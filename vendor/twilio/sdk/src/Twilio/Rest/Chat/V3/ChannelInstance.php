@@ -36,8 +36,8 @@ use Twilio\Deserialize;
  * @property \DateTime|null $dateCreated
  * @property \DateTime|null $dateUpdated
  * @property string|null $createdBy
- * @property int $membersCount
- * @property int $messagesCount
+ * @property int|null $membersCount
+ * @property int|null $messagesCount
  * @property string|null $messagingServiceSid
  * @property string|null $url
  */
@@ -51,7 +51,7 @@ class ChannelInstance extends InstanceResource
      * @param string $serviceSid The unique SID identifier of the Service.
      * @param string $sid A 34 character string that uniquely identifies this Channel.
      */
-    public function __construct(Version $version, array $payload, ?string $serviceSid = null, ?string $sid = null)
+    public function __construct(Version $version, array $payload, string $serviceSid = null, string $sid = null)
     {
         parent::__construct($version);
 

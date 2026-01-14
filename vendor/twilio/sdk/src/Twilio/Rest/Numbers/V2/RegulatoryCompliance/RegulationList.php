@@ -21,7 +21,6 @@ use Twilio\Options;
 use Twilio\Stream;
 use Twilio\Values;
 use Twilio\Version;
-use Twilio\Serialize;
 
 
 class RegulationList extends ListResource
@@ -59,7 +58,7 @@ class RegulationList extends ListResource
      *                        efficient page size, i.e. min(limit, 1000)
      * @return RegulationInstance[] Array of results
      */
-    public function read(array $options = [], ?int $limit = null, $pageSize = null): array
+    public function read(array $options = [], int $limit = null, $pageSize = null): array
     {
         return \iterator_to_array($this->stream($options, $limit, $pageSize), false);
     }
@@ -83,7 +82,7 @@ class RegulationList extends ListResource
      *                        efficient page size, i.e. min(limit, 1000)
      * @return Stream stream of results
      */
-    public function stream(array $options = [], ?int $limit = null, $pageSize = null): Stream
+    public function stream(array $options = [], int $limit = null, $pageSize = null): Stream
     {
         $limits = $this->version->readLimits($limit, $pageSize);
 
@@ -117,15 +116,12 @@ class RegulationList extends ListResource
                 $options['isoCountry'],
             'NumberType' =>
                 $options['numberType'],
-            'IncludeConstraints' =>
-                Serialize::booleanToString($options['includeConstraints']),
             'PageToken' => $pageToken,
             'Page' => $pageNumber,
             'PageSize' => $pageSize,
         ]);
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json']);
-        $response = $this->version->page('GET', $this->uri, $params, [], $headers);
+        $response = $this->version->page('GET', $this->uri, $params);
 
         return new RegulationPage($this->version, $response, $this->solution);
     }

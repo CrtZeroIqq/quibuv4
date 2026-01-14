@@ -63,12 +63,7 @@ class Transaction
         try {
             $response = $this->sendRequest('POST', static::ENDPOINT_CREATE, $payload);
         } catch (WebpayRequestException $exception) {
-            throw new TransactionCreateException($exception->getMessage(),
-                $exception->getTransbankErrorMessage(),
-                $exception->getHttpCode(),
-                $exception->getFailedRequest(),
-                $exception
-            );
+            throw TransactionCreateException::raise($exception);
         }
 
         return new TransactionCreateResponse($response);
@@ -96,12 +91,7 @@ class Transaction
         try {
             $response = $this->sendRequest('POST', $endpoint, $payload);
         } catch (WebpayRequestException $exception) {
-            throw new TransactionInstallmentsException($exception->getMessage(),
-                $exception->getTransbankErrorMessage(),
-                $exception->getHttpCode(),
-                $exception->getFailedRequest(),
-                $exception
-            );
+            throw TransactionInstallmentsException::raise($exception);
         }
 
         return new TransactionInstallmentsResponse($response);
@@ -135,12 +125,7 @@ class Transaction
         try {
             $response = $this->sendRequest('PUT', $endpoint, $payload);
         } catch (WebpayRequestException $exception) {
-            throw new TransactionCommitException($exception->getMessage(),
-                $exception->getTransbankErrorMessage(),
-                $exception->getHttpCode(),
-                $exception->getFailedRequest(),
-                $exception
-            );
+            throw TransactionCommitException::raise($exception);
         }
 
         return new TransactionCommitResponse($response);
@@ -166,12 +151,7 @@ class Transaction
         try {
             $response = $this->sendRequest('POST', $endpoint, $payload);
         } catch (WebpayRequestException $exception) {
-            throw new TransactionRefundException($exception->getMessage(),
-                $exception->getTransbankErrorMessage(),
-                $exception->getHttpCode(),
-                $exception->getFailedRequest(),
-                $exception
-            );
+            throw TransactionRefundException::raise($exception);
         }
 
         return new TransactionRefundResponse($response);
@@ -192,12 +172,7 @@ class Transaction
         try {
             $response = $this->sendRequest('GET', $endpoint, null);
         } catch (WebpayRequestException $exception) {
-            throw new TransactionStatusException($exception->getMessage(),
-                $exception->getTransbankErrorMessage(),
-                $exception->getHttpCode(),
-                $exception->getFailedRequest(),
-                $exception
-            );
+            throw TransactionStatusException::raise($exception);
         }
 
         return new \Transbank\TransaccionCompleta\Responses\TransactionStatusResponse($response);
@@ -227,12 +202,7 @@ class Transaction
         try {
             $response = $this->sendRequest('PUT', $endpoint, $payload);
         } catch (WebpayRequestException $exception) {
-            throw new TransactionCaptureException($exception->getMessage(),
-                $exception->getTransbankErrorMessage(),
-                $exception->getHttpCode(),
-                $exception->getFailedRequest(),
-                $exception
-            );
+            throw TransactionCaptureException::raise($exception);
         }
 
         return new Responses\TransactionCaptureResponse($response);

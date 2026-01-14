@@ -24,8 +24,6 @@ abstract class PluginVersionsOptions
     /**
      * @param string $changelog The changelog of the Flex Plugin Version.
      * @param bool $private Whether this Flex Plugin Version requires authorization.
-     * @param string $cliVersion The version of Flex Plugins CLI used to create this plugin
-     * @param string $validateStatus The validation status of the plugin, indicating whether it has been validated
      * @param string $flexMetadata The Flex-Metadata HTTP request header
      * @return CreatePluginVersionsOptions Options builder
      */
@@ -33,8 +31,6 @@ abstract class PluginVersionsOptions
         
         string $changelog = Values::NONE,
         bool $private = Values::BOOL_NONE,
-        string $cliVersion = Values::NONE,
-        string $validateStatus = Values::NONE,
         string $flexMetadata = Values::NONE
 
     ): CreatePluginVersionsOptions
@@ -42,8 +38,6 @@ abstract class PluginVersionsOptions
         return new CreatePluginVersionsOptions(
             $changelog,
             $private,
-            $cliVersion,
-            $validateStatus,
             $flexMetadata
         );
     }
@@ -85,23 +79,17 @@ class CreatePluginVersionsOptions extends Options
     /**
      * @param string $changelog The changelog of the Flex Plugin Version.
      * @param bool $private Whether this Flex Plugin Version requires authorization.
-     * @param string $cliVersion The version of Flex Plugins CLI used to create this plugin
-     * @param string $validateStatus The validation status of the plugin, indicating whether it has been validated
      * @param string $flexMetadata The Flex-Metadata HTTP request header
      */
     public function __construct(
         
         string $changelog = Values::NONE,
         bool $private = Values::BOOL_NONE,
-        string $cliVersion = Values::NONE,
-        string $validateStatus = Values::NONE,
         string $flexMetadata = Values::NONE
 
     ) {
         $this->options['changelog'] = $changelog;
         $this->options['private'] = $private;
-        $this->options['cliVersion'] = $cliVersion;
-        $this->options['validateStatus'] = $validateStatus;
         $this->options['flexMetadata'] = $flexMetadata;
     }
 
@@ -126,30 +114,6 @@ class CreatePluginVersionsOptions extends Options
     public function setPrivate(bool $private): self
     {
         $this->options['private'] = $private;
-        return $this;
-    }
-
-    /**
-     * The version of Flex Plugins CLI used to create this plugin
-     *
-     * @param string $cliVersion The version of Flex Plugins CLI used to create this plugin
-     * @return $this Fluent Builder
-     */
-    public function setCliVersion(string $cliVersion): self
-    {
-        $this->options['cliVersion'] = $cliVersion;
-        return $this;
-    }
-
-    /**
-     * The validation status of the plugin, indicating whether it has been validated
-     *
-     * @param string $validateStatus The validation status of the plugin, indicating whether it has been validated
-     * @return $this Fluent Builder
-     */
-    public function setValidateStatus(string $validateStatus): self
-    {
-        $this->options['validateStatus'] = $validateStatus;
         return $this;
     }
 

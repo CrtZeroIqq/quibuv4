@@ -23,24 +23,20 @@ use Twilio\Values;
 use Twilio\Version;
 use Twilio\InstanceContext;
 use Twilio\Rest\Video\V1\Room\RecordingRulesList;
-use Twilio\Rest\Video\V1\Room\TranscriptionsList;
 use Twilio\Rest\Video\V1\Room\ParticipantList;
 use Twilio\Rest\Video\V1\Room\RoomRecordingList;
 
 
 /**
  * @property RecordingRulesList $recordingRules
- * @property TranscriptionsList $transcriptions
  * @property ParticipantList $participants
  * @property RoomRecordingList $recordings
  * @method \Twilio\Rest\Video\V1\Room\ParticipantContext participants(string $sid)
- * @method \Twilio\Rest\Video\V1\Room\TranscriptionsContext transcriptions(string $ttid)
  * @method \Twilio\Rest\Video\V1\Room\RoomRecordingContext recordings(string $sid)
  */
 class RoomContext extends InstanceContext
     {
     protected $_recordingRules;
-    protected $_transcriptions;
     protected $_participants;
     protected $_recordings;
 
@@ -75,8 +71,7 @@ class RoomContext extends InstanceContext
     public function fetch(): RoomInstance
     {
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->fetch('GET', $this->uri, [], [], $headers);
+        $payload = $this->version->fetch('GET', $this->uri, [], []);
 
         return new RoomInstance(
             $this->version,
@@ -101,8 +96,7 @@ class RoomContext extends InstanceContext
                 $status,
         ]);
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->update('POST', $this->uri, [], $data, $headers);
+        $payload = $this->version->update('POST', $this->uri, [], $data);
 
         return new RoomInstance(
             $this->version,
@@ -125,21 +119,6 @@ class RoomContext extends InstanceContext
         }
 
         return $this->_recordingRules;
-    }
-
-    /**
-     * Access the transcriptions
-     */
-    protected function getTranscriptions(): TranscriptionsList
-    {
-        if (!$this->_transcriptions) {
-            $this->_transcriptions = new TranscriptionsList(
-                $this->version,
-                $this->solution['sid']
-            );
-        }
-
-        return $this->_transcriptions;
     }
 
     /**

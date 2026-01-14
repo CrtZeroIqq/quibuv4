@@ -2,8 +2,6 @@
 
 namespace Transbank\Webpay\Modal\Responses;
 
-use Transbank\Utils\Utils;
-
 class TransactionCreateResponse
 {
     /**
@@ -13,7 +11,7 @@ class TransactionCreateResponse
 
     public function __construct(array $json)
     {
-        $this->token = Utils::returnValueIfExists($json, 'token');
+        $this->token = $json['token'];
     }
 
     /**

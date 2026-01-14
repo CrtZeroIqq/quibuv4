@@ -18,7 +18,6 @@
 namespace Twilio\Rest\Accounts\V1;
 
 use Twilio\Exceptions\TwilioException;
-use Twilio\Values;
 use Twilio\Version;
 use Twilio\InstanceContext;
 
@@ -51,8 +50,7 @@ class AuthTokenPromotionContext extends InstanceContext
     public function update(): AuthTokenPromotionInstance
     {
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->update('POST', $this->uri, [], [], $headers);
+        $payload = $this->version->update('POST', $this->uri, [], []);
 
         return new AuthTokenPromotionInstance(
             $this->version,

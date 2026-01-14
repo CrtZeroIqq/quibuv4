@@ -22,8 +22,11 @@ class InscriptionStartResponse
      */
     public function __construct($json)
     {
-        $this->token = Utils::returnValueIfExists($json, 'token');
-        $this->urlWebpay = Utils::returnValueIfExists($json, 'url');
+        $token = Utils::returnValueIfExists($json, 'token');
+        $this->setToken($token);
+
+        $url = Utils::returnValueIfExists($json, 'url');
+        $this->setUrlWebpay($url);
     }
 
     /**

@@ -770,5 +770,53 @@ input.error {
 .mb-4 { margin-bottom: 32px; }
 
 /* ==========================================
+   SELECTORES DE MÉTODO DE PAGO
+   ========================================== */
+.payment-method-selector {
+    margin: 24px 0;
+}
+
+.payment-method-option {
+    display: block;
+    margin-bottom: 12px;
+    cursor: pointer;
+}
+
+.payment-method-option input[type="radio"] {
+    display: none;
+}
+
+.payment-method-card {
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: 16px;
+    background: white;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.payment-method-option:hover .payment-method-card {
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+}
+
+.payment-method-option input[type="radio"]:checked + .payment-method-card {
+    border-color: var(--primary-color);
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+.payment-method-card img {
+    max-width: 200px;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+/* ==========================================
    FIN DEL DISEÑO PREMIUM
    ========================================== */

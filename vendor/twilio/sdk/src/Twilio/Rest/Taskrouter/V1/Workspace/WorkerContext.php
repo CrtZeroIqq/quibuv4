@@ -90,7 +90,8 @@ class WorkerContext extends InstanceContext
 
         $options = new Values($options);
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded' , 'If-Match' => $options['ifMatch']]);
+        $headers = Values::of(['If-Match' => $options['ifMatch']]);
+
         return $this->version->delete('DELETE', $this->uri, [], [], $headers);
     }
 
@@ -104,8 +105,7 @@ class WorkerContext extends InstanceContext
     public function fetch(): WorkerInstance
     {
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->fetch('GET', $this->uri, [], [], $headers);
+        $payload = $this->version->fetch('GET', $this->uri, [], []);
 
         return new WorkerInstance(
             $this->version,
@@ -139,7 +139,8 @@ class WorkerContext extends InstanceContext
                 Serialize::booleanToString($options['rejectPendingReservations']),
         ]);
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' , 'If-Match' => $options['ifMatch']]);
+        $headers = Values::of(['If-Match' => $options['ifMatch']]);
+
         $payload = $this->version->update('POST', $this->uri, [], $data, $headers);
 
         return new WorkerInstance(

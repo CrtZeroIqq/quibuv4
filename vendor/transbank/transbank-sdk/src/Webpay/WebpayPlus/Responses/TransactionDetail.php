@@ -4,7 +4,6 @@ namespace Transbank\Webpay\WebpayPlus\Responses;
 
 use Transbank\Utils\ResponseCodesEnum;
 use Transbank\Utils\TransactionStatusEnum;
-use Transbank\Utils\Utils;
 
 class TransactionDetail
 {
@@ -18,20 +17,54 @@ class TransactionDetail
     public $commerceCode;
     public $buyOrder;
 
+    /**
+     * TransactionDetail constructor.
+     *
+     * @param $amount
+     * @param $status
+     * @param $authorizationCode
+     * @param $paymentTypeCode
+     * @param $responseCode
+     * @param $installmentsNumber
+     * @param $commerceCode
+     * @param $buyOrder
+     */
+    public function __construct(
+        $amount,
+        $status,
+        $authorizationCode,
+        $paymentTypeCode,
+        $responseCode,
+        $installmentsNumber,
+        $installmentsAmount,
+        $commerceCode,
+        $buyOrder
+    ) {
+        $this->amount = $amount;
+        $this->status = $status;
+        $this->authorizationCode = $authorizationCode;
+        $this->paymentTypeCode = $paymentTypeCode;
+        $this->responseCode = $responseCode;
+        $this->installmentsNumber = $installmentsNumber;
+        $this->installmentsAmount = $installmentsAmount;
+        $this->commerceCode = $commerceCode;
+        $this->buyOrder = $buyOrder;
+    }
+
     public static function createFromArray(array $array)
     {
-        $result = new TransactionDetail();
-        $result->amount = Utils::returnValueIfExists($array, 'amount');
-        $result->status = Utils::returnValueIfExists($array, 'status');
-        $result->authorizationCode = Utils::returnValueIfExists($array, 'authorization_code');
-        $result->paymentTypeCode = Utils::returnValueIfExists($array, 'payment_type_code');
-        $result->responseCode = Utils::returnValueIfExists($array, 'response_code');
-        $result->installmentsNumber = Utils::returnValueIfExists($array, 'installments_number');
-        $result->installmentsAmount = Utils::returnValueIfExists($array, 'installments_amount');
-        $result->commerceCode = Utils::returnValueIfExists($array, 'commerce_code');
-        $result->buyOrder = Utils::returnValueIfExists($array, 'buy_order');
+        $amount = isset($array['amount']) ? $array['amount'] : null;
+        $status = isset($array['status']) ? $array['status'] : null;
+        $authorizationCode = isset($array['authorization_code']) ? $array['authorization_code'] : null;
+        $paymentTypeCode = isset($array['payment_type_code']) ? $array['payment_type_code'] : null;
+        $responseCode = isset($array['response_code']) ? $array['response_code'] : null;
+        $installmentsNumber = isset($array['installments_number']) ? $array['installments_number'] : null;
+        $installmentsAmount = isset($array['installments_amount']) ? $array['installments_amount'] : null;
+        $commerceCode = isset($array['commerce_code']) ? $array['commerce_code'] : null;
+        $buyOrder = isset($array['buy_order']) ? $array['buy_order'] : null;
 
-        return $result;
+        return new static($amount, $status, $authorizationCode, $paymentTypeCode, $responseCode, $installmentsNumber,
+            $installmentsAmount, $commerceCode, $buyOrder);
     }
 
     public function isApproved()

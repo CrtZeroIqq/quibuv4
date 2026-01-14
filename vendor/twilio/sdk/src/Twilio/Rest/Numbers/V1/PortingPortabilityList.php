@@ -40,7 +40,7 @@ class PortingPortabilityList extends ListResource
     /**
      * Constructs a PortingPortabilityContext
      *
-     * @param string $phoneNumber Phone number to check portability in e164 format.
+     * @param string $phoneNumber The phone number which portability is to be checked. Phone numbers are in E.164 format (e.g. +16175551212).
      */
     public function getContext(
         string $phoneNumber

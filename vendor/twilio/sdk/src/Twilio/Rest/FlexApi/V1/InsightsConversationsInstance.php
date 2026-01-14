@@ -26,7 +26,7 @@ use Twilio\Version;
 /**
  * @property string|null $accountId
  * @property string|null $conversationId
- * @property int $segmentCount
+ * @property int|null $segmentCount
  * @property array[]|null $segments
  */
 class InsightsConversationsInstance extends InstanceResource

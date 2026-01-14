@@ -27,7 +27,7 @@ use Twilio\Version;
 /**
  * @property string|null $accountSid
  * @property string|null $type
- * @property int $schemaVersion
+ * @property int|null $schemaVersion
  * @property string|null $subscriptionSid
  * @property string|null $url
  */
@@ -41,7 +41,7 @@ class SubscribedEventInstance extends InstanceResource
      * @param string $subscriptionSid The unique SID identifier of the Subscription.
      * @param string $type Type of event being subscribed to.
      */
-    public function __construct(Version $version, array $payload, string $subscriptionSid, ?string $type = null)
+    public function __construct(Version $version, array $payload, string $subscriptionSid, string $type = null)
     {
         parent::__construct($version);
 

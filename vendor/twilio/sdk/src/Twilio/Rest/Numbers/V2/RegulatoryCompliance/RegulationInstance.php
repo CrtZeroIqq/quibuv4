@@ -19,7 +19,6 @@ namespace Twilio\Rest\Numbers\V2\RegulatoryCompliance;
 
 use Twilio\Exceptions\TwilioException;
 use Twilio\InstanceResource;
-use Twilio\Options;
 use Twilio\Values;
 use Twilio\Version;
 
@@ -42,7 +41,7 @@ class RegulationInstance extends InstanceResource
      * @param mixed[] $payload The response payload
      * @param string $sid The unique string that identifies the Regulation resource.
      */
-    public function __construct(Version $version, array $payload, ?string $sid = null)
+    public function __construct(Version $version, array $payload, string $sid = null)
     {
         parent::__construct($version);
 
@@ -81,14 +80,13 @@ class RegulationInstance extends InstanceResource
     /**
      * Fetch the RegulationInstance
      *
-     * @param array|Options $options Optional Arguments
      * @return RegulationInstance Fetched RegulationInstance
      * @throws TwilioException When an HTTP error occurs.
      */
-    public function fetch(array $options = []): RegulationInstance
+    public function fetch(): RegulationInstance
     {
 
-        return $this->proxy()->fetch($options);
+        return $this->proxy()->fetch();
     }
 
     /**

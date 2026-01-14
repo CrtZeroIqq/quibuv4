@@ -32,7 +32,7 @@ use Twilio\Deserialize;
  * @property string|null $channelMessageSid
  * @property string|null $participantSid
  * @property string $status
- * @property int $errorCode
+ * @property int|null $errorCode
  * @property \DateTime|null $dateCreated
  * @property \DateTime|null $dateUpdated
  * @property string|null $url
@@ -48,7 +48,7 @@ class DeliveryReceiptInstance extends InstanceResource
      * @param string $messageSid The SID of the message within a [Conversation](https://www.twilio.com/docs/conversations/api/conversation-resource) the delivery receipt belongs to.
      * @param string $sid A 34 character string that uniquely identifies this resource.
      */
-    public function __construct(Version $version, array $payload, string $conversationSid, string $messageSid, ?string $sid = null)
+    public function __construct(Version $version, array $payload, string $conversationSid, string $messageSid, string $sid = null)
     {
         parent::__construct($version);
 

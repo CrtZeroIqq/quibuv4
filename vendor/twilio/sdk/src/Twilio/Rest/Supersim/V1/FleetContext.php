@@ -57,8 +57,7 @@ class FleetContext extends InstanceContext
     public function fetch(): FleetInstance
     {
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->fetch('GET', $this->uri, [], [], $headers);
+        $payload = $this->version->fetch('GET', $this->uri, [], []);
 
         return new FleetInstance(
             $this->version,
@@ -97,8 +96,7 @@ class FleetContext extends InstanceContext
                 $options['dataLimit'],
         ]);
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->update('POST', $this->uri, [], $data, $headers);
+        $payload = $this->version->update('POST', $this->uri, [], $data);
 
         return new FleetInstance(
             $this->version,

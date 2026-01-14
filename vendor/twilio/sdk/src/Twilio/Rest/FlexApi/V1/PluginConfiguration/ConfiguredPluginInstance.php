@@ -30,7 +30,7 @@ use Twilio\Deserialize;
  * @property string|null $configurationSid
  * @property string|null $pluginSid
  * @property string|null $pluginVersionSid
- * @property int $phase
+ * @property int|null $phase
  * @property string|null $pluginUrl
  * @property string|null $uniqueName
  * @property string|null $friendlyName
@@ -53,7 +53,7 @@ class ConfiguredPluginInstance extends InstanceResource
      * @param string $configurationSid The SID of the Flex Plugin Configuration the resource to belongs to.
      * @param string $pluginSid The unique string that we created to identify the Flex Plugin resource.
      */
-    public function __construct(Version $version, array $payload, string $configurationSid, ?string $pluginSid = null)
+    public function __construct(Version $version, array $payload, string $configurationSid, string $pluginSid = null)
     {
         parent::__construct($version);
 

@@ -203,6 +203,33 @@ if ($rut) {
                         </div>
                     </div>
 
+                    <?php
+                    // Verificar si el tesorero tiene Mercado Pago vinculado
+                    $tiene_mp = !empty($grupo['mp_access_token']);
+                    ?>
+
+                    <div class="payment-method-selector" style="margin: 24px 0;">
+                        <h3 style="margin-bottom: 16px; font-size: 18px; color: var(--text-color);">Selecciona método de pago:</h3>
+
+                        <?php if ($tiene_mp): ?>
+                        <label class="payment-method-option">
+                            <input type="radio" name="metodo_pago" value="mercadopago" checked>
+                            <div class="payment-method-card">
+                                <img src="https://http2.mlstatic.com/frontend-assets/mp-web-navigation/ui-navigation/5.21.22/mercadopago/logo__large@2x.png" alt="Mercado Pago" style="height: 30px; margin-bottom: 8px;">
+                                <p style="font-size: 14px; color: var(--text-muted); margin: 0;">Tarjetas de crédito y débito</p>
+                            </div>
+                        </label>
+                        <?php endif; ?>
+
+                        <label class="payment-method-option">
+                            <input type="radio" name="metodo_pago" value="transbank" <?php echo !$tiene_mp ? 'checked' : ''; ?>>
+                            <div class="payment-method-card">
+                                <img src="https://www.transbank.cl/public/img/Logo_Webpay-3-01.svg" alt="Webpay" style="height: 30px; margin-bottom: 8px;">
+                                <p style="font-size: 14px; color: var(--text-muted); margin: 0;">Webpay Plus (Transbank)</p>
+                            </div>
+                        </label>
+                    </div>
+
                     <button type="submit" class="btn btn-success" disabled>
                         Proceder al Pago
                     </button>

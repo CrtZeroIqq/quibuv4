@@ -2,8 +2,6 @@
 
 namespace Transbank\Webpay\WebpayPlus\Responses;
 
-use Transbank\Utils\Utils;
-
 class TransactionCreateResponse
 {
     /**
@@ -27,8 +25,7 @@ class TransactionCreateResponse
      */
     public function __construct($json)
     {
-        $this->token = Utils::returnValueIfExists($json, 'token');
-        $this->url = Utils::returnValueIfExists($json, 'url');
+        $this->fromJSON($json);
     }
 
     /**
@@ -42,8 +39,8 @@ class TransactionCreateResponse
      */
     public function fromJSON($json)
     {
-        $this->token = Utils::returnValueIfExists($json, 'token');
-        $this->url = Utils::returnValueIfExists($json, 'url');
+        $this->setToken($json['token']);
+        $this->setUrl($json['url']);
 
         return $this;
     }

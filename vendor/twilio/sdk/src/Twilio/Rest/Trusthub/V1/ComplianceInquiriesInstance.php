@@ -19,7 +19,6 @@ namespace Twilio\Rest\Trusthub\V1;
 
 use Twilio\Exceptions\TwilioException;
 use Twilio\InstanceResource;
-use Twilio\Options;
 use Twilio\Values;
 use Twilio\Version;
 
@@ -39,7 +38,7 @@ class ComplianceInquiriesInstance extends InstanceResource
      * @param mixed[] $payload The response payload
      * @param string $customerId The unique CustomerId matching the Customer Profile/Compliance Inquiry that should be resumed or resubmitted. This value will have been returned by the initial Compliance Inquiry creation call.
      */
-    public function __construct(Version $version, array $payload, ?string $customerId = null)
+    public function __construct(Version $version, array $payload, string $customerId = null)
     {
         parent::__construct($version);
 
@@ -76,14 +75,13 @@ class ComplianceInquiriesInstance extends InstanceResource
      * Update the ComplianceInquiriesInstance
      *
      * @param string $primaryProfileSid The unique SID identifier of the Primary Customer Profile that should be used as a parent. Only necessary when creating a secondary Customer Profile.
-     * @param array|Options $options Optional Arguments
      * @return ComplianceInquiriesInstance Updated ComplianceInquiriesInstance
      * @throws TwilioException When an HTTP error occurs.
      */
-    public function update(string $primaryProfileSid, array $options = []): ComplianceInquiriesInstance
+    public function update(string $primaryProfileSid): ComplianceInquiriesInstance
     {
 
-        return $this->proxy()->update($primaryProfileSid, $options);
+        return $this->proxy()->update($primaryProfileSid);
     }
 
     /**

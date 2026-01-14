@@ -59,7 +59,7 @@ class CallSummariesList extends ListResource
      *                        efficient page size, i.e. min(limit, 1000)
      * @return CallSummariesInstance[] Array of results
      */
-    public function read(array $options = [], ?int $limit = null, $pageSize = null): array
+    public function read(array $options = [], int $limit = null, $pageSize = null): array
     {
         return \iterator_to_array($this->stream($options, $limit, $pageSize), false);
     }
@@ -83,7 +83,7 @@ class CallSummariesList extends ListResource
      *                        efficient page size, i.e. min(limit, 1000)
      * @return Stream stream of results
      */
-    public function stream(array $options = [], ?int $limit = null, $pageSize = null): Stream
+    public function stream(array $options = [], int $limit = null, $pageSize = null): Stream
     {
         $limits = $this->version->readLimits($limit, $pageSize);
 
@@ -123,6 +123,8 @@ class CallSummariesList extends ListResource
                 $options['fromCountryCode'],
             'ToCountryCode' =>
                 $options['toCountryCode'],
+            'Branded' =>
+                Serialize::booleanToString($options['branded']),
             'VerifiedCaller' =>
                 Serialize::booleanToString($options['verifiedCaller']),
             'HasTag' =>
@@ -157,39 +159,12 @@ class CallSummariesList extends ListResource
                 Serialize::booleanToString($options['spamAnnotation']),
             'CallScoreAnnotation' =>
                 $options['callScoreAnnotation'],
-            'BrandedEnabled' =>
-                Serialize::booleanToString($options['brandedEnabled']),
-            'VoiceIntegrityEnabled' =>
-                Serialize::booleanToString($options['voiceIntegrityEnabled']),
-            'BrandedBundleSid' =>
-                $options['brandedBundleSid'],
-            'BrandedLogo' =>
-                Serialize::booleanToString($options['brandedLogo']),
-            'BrandedType' =>
-                $options['brandedType'],
-            'BrandedUseCase' =>
-                $options['brandedUseCase'],
-            'BrandedCallReason' =>
-                $options['brandedCallReason'],
-            'VoiceIntegrityBundleSid' =>
-                $options['voiceIntegrityBundleSid'],
-            'VoiceIntegrityUseCase' =>
-                $options['voiceIntegrityUseCase'],
-            'BusinessProfileIdentity' =>
-                $options['businessProfileIdentity'],
-            'BusinessProfileIndustry' =>
-                $options['businessProfileIndustry'],
-            'BusinessProfileBundleSid' =>
-                $options['businessProfileBundleSid'],
-            'BusinessProfileType' =>
-                $options['businessProfileType'],
             'PageToken' => $pageToken,
             'Page' => $pageNumber,
             'PageSize' => $pageSize,
         ]);
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json']);
-        $response = $this->version->page('GET', $this->uri, $params, [], $headers);
+        $response = $this->version->page('GET', $this->uri, $params);
 
         return new CallSummariesPage($this->version, $response, $this->solution);
     }

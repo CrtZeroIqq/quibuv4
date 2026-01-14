@@ -29,11 +29,11 @@ use Twilio\Deserialize;
  * @property string|null $accountSid
  * @property string|null $sid
  * @property string|null $trunkSid
- * @property int $weight
+ * @property int|null $weight
  * @property bool|null $enabled
  * @property string|null $sipUrl
  * @property string|null $friendlyName
- * @property int $priority
+ * @property int|null $priority
  * @property \DateTime|null $dateCreated
  * @property \DateTime|null $dateUpdated
  * @property string|null $url
@@ -48,7 +48,7 @@ class OriginationUrlInstance extends InstanceResource
      * @param string $trunkSid The SID of the Trunk to associate the resource with.
      * @param string $sid The unique string that we created to identify the OriginationUrl resource to delete.
      */
-    public function __construct(Version $version, array $payload, string $trunkSid, ?string $sid = null)
+    public function __construct(Version $version, array $payload, string $trunkSid, string $sid = null)
     {
         parent::__construct($version);
 

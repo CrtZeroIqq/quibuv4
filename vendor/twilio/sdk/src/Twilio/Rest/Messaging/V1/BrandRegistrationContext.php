@@ -19,7 +19,6 @@ namespace Twilio\Rest\Messaging\V1;
 
 use Twilio\Exceptions\TwilioException;
 use Twilio\ListResource;
-use Twilio\Values;
 use Twilio\Version;
 use Twilio\InstanceContext;
 use Twilio\Rest\Messaging\V1\BrandRegistration\BrandRegistrationOtpList;
@@ -67,8 +66,7 @@ class BrandRegistrationContext extends InstanceContext
     public function fetch(): BrandRegistrationInstance
     {
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->fetch('GET', $this->uri, [], [], $headers);
+        $payload = $this->version->fetch('GET', $this->uri, [], []);
 
         return new BrandRegistrationInstance(
             $this->version,
@@ -87,8 +85,7 @@ class BrandRegistrationContext extends InstanceContext
     public function update(): BrandRegistrationInstance
     {
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->update('POST', $this->uri, [], [], $headers);
+        $payload = $this->version->update('POST', $this->uri, [], []);
 
         return new BrandRegistrationInstance(
             $this->version,

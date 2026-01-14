@@ -38,7 +38,7 @@ use Twilio\Deserialize;
  * @property bool|null $wasEdited
  * @property string|null $from
  * @property string|null $body
- * @property int $index
+ * @property int|null $index
  * @property string|null $type
  * @property array|null $media
  * @property string|null $url
@@ -54,7 +54,7 @@ class MessageInstance extends InstanceResource
      * @param string $channelSid The SID of the [Channel](https://www.twilio.com/docs/chat/channels) the new Message resource belongs to. This value can be the Channel resource's `sid` or `unique_name`.
      * @param string $sid The SID of the Message resource to delete.
      */
-    public function __construct(Version $version, array $payload, string $serviceSid, string $channelSid, ?string $sid = null)
+    public function __construct(Version $version, array $payload, string $serviceSid, string $channelSid, string $sid = null)
     {
         parent::__construct($version);
 

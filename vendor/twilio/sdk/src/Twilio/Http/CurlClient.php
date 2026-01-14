@@ -4,7 +4,6 @@
 namespace Twilio\Http;
 
 
-use Twilio\AuthStrategy\AuthStrategy;
 use Twilio\Exceptions\ConfigurationException;
 use Twilio\Exceptions\EnvironmentException;
 
@@ -21,10 +20,10 @@ class CurlClient implements Client {
 
     public function request(string $method, string $url,
                             array $params = [], array $data = [], array $headers = [],
-                            ?string $user = null, ?string $password = null,
-                            ?int $timeout = null, ?AuthStrategy $authStrategy = null): Response {
+                            string $user = null, string $password = null,
+                            int $timeout = null): Response {
         $options = $this->options($method, $url, $params, $data, $headers,
-                                  $user, $password, $timeout, $authStrategy);
+                                  $user, $password, $timeout);
 
         $this->lastRequest = $options;
         $this->lastResponse = null;
@@ -86,8 +85,8 @@ class CurlClient implements Client {
 
     public function options(string $method, string $url,
                             array $params = [], array $data = [], array $headers = [],
-                            ?string $user = null, ?string $password = null,
-                            ?int $timeout = null, ?AuthStrategy $authStrategy = null): array {
+                            string $user = null, string $password = null,
+                            int $timeout = null): array {
         $timeout = $timeout ?? self::DEFAULT_TIMEOUT;
         $options = $this->curlOptions + [
             CURLOPT_URL => $url,
@@ -96,7 +95,6 @@ class CurlClient implements Client {
             CURLOPT_INFILESIZE => Null,
             CURLOPT_HTTPHEADER => [],
             CURLOPT_TIMEOUT => $timeout,
-            CURLOPT_PROTOCOLS => CURLPROTO_HTTPS | CURLPROTO_HTTP
         ];
 
         foreach ($headers as $key => $value) {
@@ -105,9 +103,6 @@ class CurlClient implements Client {
 
         if ($user && $password) {
             $options[CURLOPT_HTTPHEADER][] = 'Authorization: Basic ' . \base64_encode("$user:$password");
-        }
-        elseif ($authStrategy) {
-            $options[CURLOPT_HTTPHEADER][] = 'Authorization: ' . $authStrategy->getAuthString();
         }
 
         $query = $this->buildQuery($params);
@@ -125,27 +120,25 @@ class CurlClient implements Client {
                     [$headers, $body] = $this->buildMultipartOptions($data);
                     $options[CURLOPT_POSTFIELDS] = $body;
                     $options[CURLOPT_HTTPHEADER] = \array_merge($options[CURLOPT_HTTPHEADER], $headers);
-                }
-                elseif ($headers['Content-Type'] === 'application/json') {
-                    $options[CURLOPT_POSTFIELDS] = json_encode($data);
-                }
-                else {
+                } else {
                     $options[CURLOPT_POSTFIELDS] = $this->buildQuery($data);
+                    $options[CURLOPT_HTTPHEADER][] = 'Content-Type: application/x-www-form-urlencoded';
                 }
 
                 break;
             case 'put':
-                $options[CURLOPT_CUSTOMREQUEST] = 'PUT';
-                if ($this->hasFile($data)) {
-                    [$headers, $body] = $this->buildMultipartOptions($data);
-                    $options[CURLOPT_POSTFIELDS] = $body;
-                    $options[CURLOPT_HTTPHEADER] = \array_merge($options[CURLOPT_HTTPHEADER], $headers);
-                }
-                elseif ($headers['Content-Type'] === 'application/json') {
-                    $options[CURLOPT_POSTFIELDS] = json_encode($data);
-                }
-                else {
-                    $options[CURLOPT_POSTFIELDS] = $this->buildQuery($data);
+                // TODO: PUT doesn't used anywhere and it has strange implementation. Must investigate later
+                $options[CURLOPT_PUT] = true;
+                if ($data) {
+                    if ($buffer = \fopen('php://memory', 'w+')) {
+                        $dataString = $this->buildQuery($data);
+                        \fwrite($buffer, $dataString);
+                        \fseek($buffer, 0);
+                        $options[CURLOPT_INFILE] = $buffer;
+                        $options[CURLOPT_INFILESIZE] = \strlen($dataString);
+                    } else {
+                        throw new EnvironmentException('Unable to open a temporary file');
+                    }
                 }
                 break;
             case 'head':

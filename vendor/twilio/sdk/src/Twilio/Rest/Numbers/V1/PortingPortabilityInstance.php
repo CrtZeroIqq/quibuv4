@@ -33,6 +33,8 @@ use Twilio\Version;
  * @property int|null $notPortableReasonCode
  * @property string $numberType
  * @property string|null $country
+ * @property string|null $messagingCarrier
+ * @property string|null $voiceCarrier
  * @property string|null $url
  */
 class PortingPortabilityInstance extends InstanceResource
@@ -42,9 +44,9 @@ class PortingPortabilityInstance extends InstanceResource
      *
      * @param Version $version Version that contains the resource
      * @param mixed[] $payload The response payload
-     * @param string $phoneNumber Phone number to check portability in e164 format.
+     * @param string $phoneNumber The phone number which portability is to be checked. Phone numbers are in E.164 format (e.g. +16175551212).
      */
-    public function __construct(Version $version, array $payload, ?string $phoneNumber = null)
+    public function __construct(Version $version, array $payload, string $phoneNumber = null)
     {
         parent::__construct($version);
 
@@ -58,6 +60,8 @@ class PortingPortabilityInstance extends InstanceResource
             'notPortableReasonCode' => Values::array_get($payload, 'not_portable_reason_code'),
             'numberType' => Values::array_get($payload, 'number_type'),
             'country' => Values::array_get($payload, 'country'),
+            'messagingCarrier' => Values::array_get($payload, 'messaging_carrier'),
+            'voiceCarrier' => Values::array_get($payload, 'voice_carrier'),
             'url' => Values::array_get($payload, 'url'),
         ];
 

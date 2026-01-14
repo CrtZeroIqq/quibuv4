@@ -26,7 +26,7 @@ use Twilio\Deserialize;
 
 /**
  * @property string|null $id
- * @property int $schemaVersion
+ * @property int|null $schemaVersion
  * @property \DateTime|null $dateCreated
  * @property string|null $url
  * @property string|null $raw
@@ -41,7 +41,7 @@ class SchemaVersionInstance extends InstanceResource
      * @param string $id The unique identifier of the schema. Each schema can have multiple versions, that share the same id.
      * @param int $schemaVersion The version of the schema
      */
-    public function __construct(Version $version, array $payload, string $id, ?int $schemaVersion = null)
+    public function __construct(Version $version, array $payload, string $id, int $schemaVersion = null)
     {
         parent::__construct($version);
 

@@ -61,7 +61,8 @@ class InsightsQuestionnairesQuestionContext extends InstanceContext
 
         $options = new Values($options);
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded' , 'Authorization' => $options['authorization']]);
+        $headers = Values::of(['Authorization' => $options['authorization']]);
+
         return $this->version->delete('DELETE', $this->uri, [], [], $headers);
     }
 
@@ -92,7 +93,8 @@ class InsightsQuestionnairesQuestionContext extends InstanceContext
                 $options['answerSetId'],
         ]);
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' , 'Authorization' => $options['authorization']]);
+        $headers = Values::of(['Authorization' => $options['authorization']]);
+
         $payload = $this->version->update('POST', $this->uri, [], $data, $headers);
 
         return new InsightsQuestionnairesQuestionInstance(

@@ -19,7 +19,6 @@ namespace Twilio\Rest\Api\V2010\Account\Recording;
 
 use Twilio\Exceptions\TwilioException;
 use Twilio\ListResource;
-use Twilio\Values;
 use Twilio\Version;
 use Twilio\InstanceContext;
 use Twilio\Rest\Api\V2010\Account\Recording\AddOnResult\PayloadList;
@@ -74,8 +73,7 @@ class AddOnResultContext extends InstanceContext
     public function delete(): bool
     {
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded' ]);
-        return $this->version->delete('DELETE', $this->uri, [], [], $headers);
+        return $this->version->delete('DELETE', $this->uri);
     }
 
 
@@ -88,8 +86,7 @@ class AddOnResultContext extends InstanceContext
     public function fetch(): AddOnResultInstance
     {
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->fetch('GET', $this->uri, [], [], $headers);
+        $payload = $this->version->fetch('GET', $this->uri, [], []);
 
         return new AddOnResultInstance(
             $this->version,

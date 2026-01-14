@@ -30,7 +30,7 @@ use Twilio\Deserialize;
  * @property string|null $sid
  * @property string|null $friendlyName
  * @property string|null $ipAddress
- * @property int $cidrPrefixLength
+ * @property int|null $cidrPrefixLength
  * @property \DateTime|null $dateCreated
  * @property \DateTime|null $dateUpdated
  * @property string|null $url
@@ -44,7 +44,7 @@ class IpRecordInstance extends InstanceResource
      * @param mixed[] $payload The response payload
      * @param string $sid The Twilio-provided string that uniquely identifies the IP Record resource to delete.
      */
-    public function __construct(Version $version, array $payload, ?string $sid = null)
+    public function __construct(Version $version, array $payload, string $sid = null)
     {
         parent::__construct($version);
 

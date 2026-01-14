@@ -32,7 +32,7 @@ use Twilio\Deserialize;
  * @property string $status
  * @property string $direction
  * @property string|null $deviceIp
- * @property int $devicePort
+ * @property int|null $devicePort
  * @property string $payloadType
  * @property string|null $payload
  * @property \DateTime|null $dateCreated
@@ -48,7 +48,7 @@ class IpCommandInstance extends InstanceResource
      * @param mixed[] $payload The response payload
      * @param string $sid The SID of the IP Command resource to fetch.
      */
-    public function __construct(Version $version, array $payload, ?string $sid = null)
+    public function __construct(Version $version, array $payload, string $sid = null)
     {
         parent::__construct($version);
 

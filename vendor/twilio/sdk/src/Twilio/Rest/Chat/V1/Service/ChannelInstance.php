@@ -39,8 +39,8 @@ use Twilio\Rest\Chat\V1\Service\Channel\MessageList;
  * @property \DateTime|null $dateCreated
  * @property \DateTime|null $dateUpdated
  * @property string|null $createdBy
- * @property int $membersCount
- * @property int $messagesCount
+ * @property int|null $membersCount
+ * @property int|null $messagesCount
  * @property string|null $url
  * @property array|null $links
  */
@@ -58,7 +58,7 @@ class ChannelInstance extends InstanceResource
      * @param string $serviceSid The SID of the [Service](https://www.twilio.com/docs/api/chat/rest/services) to create the resource under.
      * @param string $sid The Twilio-provided string that uniquely identifies the Channel resource to delete.
      */
-    public function __construct(Version $version, array $payload, string $serviceSid, ?string $sid = null)
+    public function __construct(Version $version, array $payload, string $serviceSid, string $sid = null)
     {
         parent::__construct($version);
 

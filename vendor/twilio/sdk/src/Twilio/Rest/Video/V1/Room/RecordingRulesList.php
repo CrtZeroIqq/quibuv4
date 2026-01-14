@@ -58,8 +58,7 @@ class RecordingRulesList extends ListResource
     public function fetch(): RecordingRulesInstance
     {
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->fetch('GET', $this->uri, [], [], $headers);
+        $payload = $this->version->fetch('GET', $this->uri, [], []);
 
         return new RecordingRulesInstance(
             $this->version,
@@ -86,8 +85,7 @@ class RecordingRulesList extends ListResource
                 Serialize::jsonObject($options['rules']),
         ]);
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->update('POST', $this->uri, [], $data, $headers);
+        $payload = $this->version->update('POST', $this->uri, [], $data);
 
         return new RecordingRulesInstance(
             $this->version,

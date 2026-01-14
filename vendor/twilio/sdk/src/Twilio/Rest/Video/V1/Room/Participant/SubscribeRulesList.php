@@ -64,8 +64,7 @@ class SubscribeRulesList extends ListResource
     public function fetch(): SubscribeRulesInstance
     {
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->fetch('GET', $this->uri, [], [], $headers);
+        $payload = $this->version->fetch('GET', $this->uri, [], []);
 
         return new SubscribeRulesInstance(
             $this->version,
@@ -93,8 +92,7 @@ class SubscribeRulesList extends ListResource
                 Serialize::jsonObject($options['rules']),
         ]);
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->update('POST', $this->uri, [], $data, $headers);
+        $payload = $this->version->update('POST', $this->uri, [], $data);
 
         return new SubscribeRulesInstance(
             $this->version,

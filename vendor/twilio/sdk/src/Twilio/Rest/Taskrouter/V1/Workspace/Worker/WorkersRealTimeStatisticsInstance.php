@@ -27,7 +27,7 @@ use Twilio\Version;
 /**
  * @property string|null $accountSid
  * @property array[]|null $activityStatistics
- * @property int $totalWorkers
+ * @property int|null $totalWorkers
  * @property string|null $workspaceSid
  * @property string|null $url
  */

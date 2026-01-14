@@ -28,16 +28,15 @@ abstract class MessageOptions
      * @param string $contentSid For [Content Editor/API](https://www.twilio.com/docs/content) only: The SID of the Content Template to be used with the Message, e.g., `HXXXXXXXXXXXXXXXXXXXXXXXXXXXXX`. If this parameter is not provided, a Content Template is not used. Find the SID in the Console on the Content Editor page. For Content API users, the SID is found in Twilio's response when [creating the Template](https://www.twilio.com/docs/content/content-api-resources#create-templates) or by [fetching your Templates](https://www.twilio.com/docs/content/content-api-resources#fetch-all-content-resources).
      * @param string $statusCallback The URL of the endpoint to which Twilio sends [Message status callback requests](https://www.twilio.com/docs/sms/api/message-resource#twilios-request-to-the-statuscallback-url). URL must contain a valid hostname and underscores are not allowed. If you include this parameter with the `messaging_service_sid`, Twilio uses this URL instead of the Status Callback URL of the [Messaging Service](https://www.twilio.com/docs/messaging/api/service-resource).
      * @param string $applicationSid The SID of the associated [TwiML Application](https://www.twilio.com/docs/usage/api/applications). [Message status callback requests](https://www.twilio.com/docs/sms/api/message-resource#twilios-request-to-the-statuscallback-url) are sent to the TwiML App's `message_status_callback` URL. Note that the `status_callback` parameter of a request takes priority over the `application_sid` parameter; if both are included `application_sid` is ignored.
-     * @param string $maxPrice [OBSOLETE] This parameter will no longer have any effect as of 2024-06-03.
+     * @param string $maxPrice [DEPRECATED] This parameter will no longer have any effect as of 2024-06-03.
      * @param bool $provideFeedback Boolean indicating whether or not you intend to provide delivery confirmation feedback to Twilio (used in conjunction with the [Message Feedback subresource](https://www.twilio.com/docs/sms/api/message-feedback-resource)). Default value is `false`.
      * @param int $attempt Total number of attempts made (including this request) to send the message regardless of the provider used
-     * @param int $validityPeriod The maximum length in seconds that the Message can remain in Twilio's outgoing message queue. If a queued Message exceeds the `validity_period`, the Message is not sent. Accepted values are integers from `1` to `36000`. Default value is `36000`. A `validity_period` greater than `5` is recommended. [Learn more about the validity period](https://www.twilio.com/blog/take-more-control-of-outbound-messages-using-validity-period-html)
+     * @param int $validityPeriod The maximum length in seconds that the Message can remain in Twilio's outgoing message queue. If a queued Message exceeds the `validity_period`, the Message is not sent. Accepted values are integers from `1` to `14400`. Default value is `14400`. A `validity_period` greater than `5` is recommended. [Learn more about the validity period](https://www.twilio.com/blog/take-more-control-of-outbound-messages-using-validity-period-html)
      * @param bool $forceDelivery Reserved
      * @param string $contentRetention
      * @param string $addressRetention
      * @param bool $smartEncoded Whether to detect Unicode characters that have a similar GSM-7 character and replace them. Can be: `true` or `false`.
      * @param string[] $persistentAction Rich actions for non-SMS/MMS channels. Used for [sending location in WhatsApp messages](https://www.twilio.com/docs/whatsapp/message-features#location-messages-with-whatsapp).
-     * @param string $trafficType
      * @param bool $shortenUrls For Messaging Services with [Link Shortening configured](https://www.twilio.com/docs/messaging/features/link-shortening) only: A Boolean indicating whether or not Twilio should shorten links in the `body` of the Message. Default value is `false`. If `true`, the `messaging_service_sid` parameter must also be provided.
      * @param string $scheduleType
      * @param \DateTime $sendAt The time that Twilio will send the message. Must be in ISO 8601 format.
@@ -64,10 +63,9 @@ abstract class MessageOptions
         string $addressRetention = Values::NONE,
         bool $smartEncoded = Values::BOOL_NONE,
         array $persistentAction = Values::ARRAY_NONE,
-        string $trafficType = Values::NONE,
         bool $shortenUrls = Values::BOOL_NONE,
         string $scheduleType = Values::NONE,
-        ?\DateTime $sendAt = null,
+        \DateTime $sendAt = null,
         bool $sendAsMms = Values::BOOL_NONE,
         string $contentVariables = Values::NONE,
         string $riskCheck = Values::NONE
@@ -91,7 +89,6 @@ abstract class MessageOptions
             $addressRetention,
             $smartEncoded,
             $persistentAction,
-            $trafficType,
             $shortenUrls,
             $scheduleType,
             $sendAt,
@@ -115,9 +112,9 @@ abstract class MessageOptions
         
         string $to = Values::NONE,
         string $from = Values::NONE,
-        ?string $dateSentBefore = null,
-        ?string $dateSent = null,
-        ?string $dateSentAfter = null
+        string $dateSentBefore = null,
+        string $dateSent = null,
+        string $dateSentAfter = null
 
     ): ReadMessageOptions
     {
@@ -160,16 +157,15 @@ class CreateMessageOptions extends Options
      * @param string $contentSid For [Content Editor/API](https://www.twilio.com/docs/content) only: The SID of the Content Template to be used with the Message, e.g., `HXXXXXXXXXXXXXXXXXXXXXXXXXXXXX`. If this parameter is not provided, a Content Template is not used. Find the SID in the Console on the Content Editor page. For Content API users, the SID is found in Twilio's response when [creating the Template](https://www.twilio.com/docs/content/content-api-resources#create-templates) or by [fetching your Templates](https://www.twilio.com/docs/content/content-api-resources#fetch-all-content-resources).
      * @param string $statusCallback The URL of the endpoint to which Twilio sends [Message status callback requests](https://www.twilio.com/docs/sms/api/message-resource#twilios-request-to-the-statuscallback-url). URL must contain a valid hostname and underscores are not allowed. If you include this parameter with the `messaging_service_sid`, Twilio uses this URL instead of the Status Callback URL of the [Messaging Service](https://www.twilio.com/docs/messaging/api/service-resource).
      * @param string $applicationSid The SID of the associated [TwiML Application](https://www.twilio.com/docs/usage/api/applications). [Message status callback requests](https://www.twilio.com/docs/sms/api/message-resource#twilios-request-to-the-statuscallback-url) are sent to the TwiML App's `message_status_callback` URL. Note that the `status_callback` parameter of a request takes priority over the `application_sid` parameter; if both are included `application_sid` is ignored.
-     * @param string $maxPrice [OBSOLETE] This parameter will no longer have any effect as of 2024-06-03.
+     * @param string $maxPrice [DEPRECATED] This parameter will no longer have any effect as of 2024-06-03.
      * @param bool $provideFeedback Boolean indicating whether or not you intend to provide delivery confirmation feedback to Twilio (used in conjunction with the [Message Feedback subresource](https://www.twilio.com/docs/sms/api/message-feedback-resource)). Default value is `false`.
      * @param int $attempt Total number of attempts made (including this request) to send the message regardless of the provider used
-     * @param int $validityPeriod The maximum length in seconds that the Message can remain in Twilio's outgoing message queue. If a queued Message exceeds the `validity_period`, the Message is not sent. Accepted values are integers from `1` to `36000`. Default value is `36000`. A `validity_period` greater than `5` is recommended. [Learn more about the validity period](https://www.twilio.com/blog/take-more-control-of-outbound-messages-using-validity-period-html)
+     * @param int $validityPeriod The maximum length in seconds that the Message can remain in Twilio's outgoing message queue. If a queued Message exceeds the `validity_period`, the Message is not sent. Accepted values are integers from `1` to `14400`. Default value is `14400`. A `validity_period` greater than `5` is recommended. [Learn more about the validity period](https://www.twilio.com/blog/take-more-control-of-outbound-messages-using-validity-period-html)
      * @param bool $forceDelivery Reserved
      * @param string $contentRetention
      * @param string $addressRetention
      * @param bool $smartEncoded Whether to detect Unicode characters that have a similar GSM-7 character and replace them. Can be: `true` or `false`.
      * @param string[] $persistentAction Rich actions for non-SMS/MMS channels. Used for [sending location in WhatsApp messages](https://www.twilio.com/docs/whatsapp/message-features#location-messages-with-whatsapp).
-     * @param string $trafficType
      * @param bool $shortenUrls For Messaging Services with [Link Shortening configured](https://www.twilio.com/docs/messaging/features/link-shortening) only: A Boolean indicating whether or not Twilio should shorten links in the `body` of the Message. Default value is `false`. If `true`, the `messaging_service_sid` parameter must also be provided.
      * @param string $scheduleType
      * @param \DateTime $sendAt The time that Twilio will send the message. Must be in ISO 8601 format.
@@ -195,10 +191,9 @@ class CreateMessageOptions extends Options
         string $addressRetention = Values::NONE,
         bool $smartEncoded = Values::BOOL_NONE,
         array $persistentAction = Values::ARRAY_NONE,
-        string $trafficType = Values::NONE,
         bool $shortenUrls = Values::BOOL_NONE,
         string $scheduleType = Values::NONE,
-        ?\DateTime $sendAt = null,
+        \DateTime $sendAt = null,
         bool $sendAsMms = Values::BOOL_NONE,
         string $contentVariables = Values::NONE,
         string $riskCheck = Values::NONE
@@ -220,7 +215,6 @@ class CreateMessageOptions extends Options
         $this->options['addressRetention'] = $addressRetention;
         $this->options['smartEncoded'] = $smartEncoded;
         $this->options['persistentAction'] = $persistentAction;
-        $this->options['trafficType'] = $trafficType;
         $this->options['shortenUrls'] = $shortenUrls;
         $this->options['scheduleType'] = $scheduleType;
         $this->options['sendAt'] = $sendAt;
@@ -314,9 +308,9 @@ class CreateMessageOptions extends Options
     }
 
     /**
-     * [OBSOLETE] This parameter will no longer have any effect as of 2024-06-03.
+     * [DEPRECATED] This parameter will no longer have any effect as of 2024-06-03.
      *
-     * @param string $maxPrice [OBSOLETE] This parameter will no longer have any effect as of 2024-06-03.
+     * @param string $maxPrice [DEPRECATED] This parameter will no longer have any effect as of 2024-06-03.
      * @return $this Fluent Builder
      */
     public function setMaxPrice(string $maxPrice): self
@@ -350,9 +344,9 @@ class CreateMessageOptions extends Options
     }
 
     /**
-     * The maximum length in seconds that the Message can remain in Twilio's outgoing message queue. If a queued Message exceeds the `validity_period`, the Message is not sent. Accepted values are integers from `1` to `36000`. Default value is `36000`. A `validity_period` greater than `5` is recommended. [Learn more about the validity period](https://www.twilio.com/blog/take-more-control-of-outbound-messages-using-validity-period-html)
+     * The maximum length in seconds that the Message can remain in Twilio's outgoing message queue. If a queued Message exceeds the `validity_period`, the Message is not sent. Accepted values are integers from `1` to `14400`. Default value is `14400`. A `validity_period` greater than `5` is recommended. [Learn more about the validity period](https://www.twilio.com/blog/take-more-control-of-outbound-messages-using-validity-period-html)
      *
-     * @param int $validityPeriod The maximum length in seconds that the Message can remain in Twilio's outgoing message queue. If a queued Message exceeds the `validity_period`, the Message is not sent. Accepted values are integers from `1` to `36000`. Default value is `36000`. A `validity_period` greater than `5` is recommended. [Learn more about the validity period](https://www.twilio.com/blog/take-more-control-of-outbound-messages-using-validity-period-html)
+     * @param int $validityPeriod The maximum length in seconds that the Message can remain in Twilio's outgoing message queue. If a queued Message exceeds the `validity_period`, the Message is not sent. Accepted values are integers from `1` to `14400`. Default value is `14400`. A `validity_period` greater than `5` is recommended. [Learn more about the validity period](https://www.twilio.com/blog/take-more-control-of-outbound-messages-using-validity-period-html)
      * @return $this Fluent Builder
      */
     public function setValidityPeriod(int $validityPeriod): self
@@ -414,16 +408,6 @@ class CreateMessageOptions extends Options
     public function setPersistentAction(array $persistentAction): self
     {
         $this->options['persistentAction'] = $persistentAction;
-        return $this;
-    }
-
-    /**
-     * @param string $trafficType
-     * @return $this Fluent Builder
-     */
-    public function setTrafficType(string $trafficType): self
-    {
-        $this->options['trafficType'] = $trafficType;
         return $this;
     }
 
@@ -522,9 +506,9 @@ class ReadMessageOptions extends Options
         
         string $to = Values::NONE,
         string $from = Values::NONE,
-        ?string $dateSentBefore = null,
-        ?string $dateSent = null,
-        ?string $dateSentAfter = null
+        string $dateSentBefore = null,
+        string $dateSent = null,
+        string $dateSentAfter = null
 
     ) {
         $this->options['to'] = $to;

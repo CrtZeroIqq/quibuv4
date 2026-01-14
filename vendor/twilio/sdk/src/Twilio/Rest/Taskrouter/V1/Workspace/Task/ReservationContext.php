@@ -68,8 +68,7 @@ class ReservationContext extends InstanceContext
     public function fetch(): ReservationInstance
     {
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->fetch('GET', $this->uri, [], [], $headers);
+        $payload = $this->version->fetch('GET', $this->uri, [], []);
 
         return new ReservationInstance(
             $this->version,
@@ -204,7 +203,8 @@ class ReservationContext extends InstanceContext
                 $options['jitterBufferSize'],
         ]);
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' , 'If-Match' => $options['ifMatch']]);
+        $headers = Values::of(['If-Match' => $options['ifMatch']]);
+
         $payload = $this->version->update('POST', $this->uri, [], $data, $headers);
 
         return new ReservationInstance(

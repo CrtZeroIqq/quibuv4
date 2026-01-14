@@ -18,7 +18,6 @@ namespace Twilio\Rest\Messaging\V1;
 
 use Twilio\Exceptions\TwilioException;
 use Twilio\ListResource;
-use Twilio\Values;
 use Twilio\Version;
 
 
@@ -50,8 +49,7 @@ class UsecaseList extends ListResource
     public function fetch(): UsecaseInstance
     {
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->fetch('GET', $this->uri, [], [], $headers);
+        $payload = $this->version->fetch('GET', $this->uri, [], []);
 
         return new UsecaseInstance(
             $this->version,

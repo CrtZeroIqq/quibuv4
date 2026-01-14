@@ -19,38 +19,34 @@ namespace Twilio\Rest\Conversations\V1;
 
 use Twilio\Exceptions\TwilioException;
 use Twilio\ListResource;
-use Twilio\Values;
 use Twilio\Version;
 use Twilio\InstanceContext;
-use Twilio\Rest\Conversations\V1\Service\ParticipantConversationList;
 use Twilio\Rest\Conversations\V1\Service\UserList;
 use Twilio\Rest\Conversations\V1\Service\BindingList;
-use Twilio\Rest\Conversations\V1\Service\ConversationWithParticipantsList;
+use Twilio\Rest\Conversations\V1\Service\ParticipantConversationList;
 use Twilio\Rest\Conversations\V1\Service\ConversationList;
 use Twilio\Rest\Conversations\V1\Service\RoleList;
 use Twilio\Rest\Conversations\V1\Service\ConfigurationList;
 
 
 /**
- * @property ParticipantConversationList $participantConversations
  * @property UserList $users
  * @property BindingList $bindings
- * @property ConversationWithParticipantsList $conversationWithParticipants
+ * @property ParticipantConversationList $participantConversations
  * @property ConversationList $conversations
  * @property RoleList $roles
  * @property ConfigurationList $configuration
- * @method \Twilio\Rest\Conversations\V1\Service\ConfigurationContext configuration()
  * @method \Twilio\Rest\Conversations\V1\Service\UserContext users(string $sid)
  * @method \Twilio\Rest\Conversations\V1\Service\RoleContext roles(string $sid)
+ * @method \Twilio\Rest\Conversations\V1\Service\ConfigurationContext configuration()
  * @method \Twilio\Rest\Conversations\V1\Service\BindingContext bindings(string $sid)
  * @method \Twilio\Rest\Conversations\V1\Service\ConversationContext conversations(string $sid)
  */
 class ServiceContext extends InstanceContext
     {
-    protected $_participantConversations;
     protected $_users;
     protected $_bindings;
-    protected $_conversationWithParticipants;
+    protected $_participantConversations;
     protected $_conversations;
     protected $_roles;
     protected $_configuration;
@@ -86,8 +82,7 @@ class ServiceContext extends InstanceContext
     public function delete(): bool
     {
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded' ]);
-        return $this->version->delete('DELETE', $this->uri, [], [], $headers);
+        return $this->version->delete('DELETE', $this->uri);
     }
 
 
@@ -100,8 +95,7 @@ class ServiceContext extends InstanceContext
     public function fetch(): ServiceInstance
     {
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->fetch('GET', $this->uri, [], [], $headers);
+        $payload = $this->version->fetch('GET', $this->uri, [], []);
 
         return new ServiceInstance(
             $this->version,
@@ -110,21 +104,6 @@ class ServiceContext extends InstanceContext
         );
     }
 
-
-    /**
-     * Access the participantConversations
-     */
-    protected function getParticipantConversations(): ParticipantConversationList
-    {
-        if (!$this->_participantConversations) {
-            $this->_participantConversations = new ParticipantConversationList(
-                $this->version,
-                $this->solution['sid']
-            );
-        }
-
-        return $this->_participantConversations;
-    }
 
     /**
      * Access the users
@@ -157,18 +136,18 @@ class ServiceContext extends InstanceContext
     }
 
     /**
-     * Access the conversationWithParticipants
+     * Access the participantConversations
      */
-    protected function getConversationWithParticipants(): ConversationWithParticipantsList
+    protected function getParticipantConversations(): ParticipantConversationList
     {
-        if (!$this->_conversationWithParticipants) {
-            $this->_conversationWithParticipants = new ConversationWithParticipantsList(
+        if (!$this->_participantConversations) {
+            $this->_participantConversations = new ParticipantConversationList(
                 $this->version,
                 $this->solution['sid']
             );
         }
 
-        return $this->_conversationWithParticipants;
+        return $this->_participantConversations;
     }
 
     /**

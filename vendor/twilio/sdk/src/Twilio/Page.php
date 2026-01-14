@@ -21,8 +21,6 @@ abstract class Page implements \Iterator {
         'num_pages',
         'start',
         'uri',
-        'totalResults',
-        'schemas'
     ];
 
     protected $version;
@@ -70,7 +68,7 @@ abstract class Page implements \Iterator {
         return \array_key_exists('meta', $this->payload) && \array_key_exists($key, $this->payload['meta']);
     }
 
-    protected function getMeta(string $key, ?string $default = null): ?string {
+    protected function getMeta(string $key, string $default = null): ?string {
         return $this->hasMeta($key) ? $this->payload['meta'][$key] : $default;
     }
 

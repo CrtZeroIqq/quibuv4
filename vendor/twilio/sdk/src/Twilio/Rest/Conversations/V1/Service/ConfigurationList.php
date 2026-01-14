@@ -20,20 +20,20 @@ use Twilio\Exceptions\TwilioException;
 use Twilio\ListResource;
 use Twilio\Version;
 use Twilio\InstanceContext;
-use Twilio\Rest\Conversations\V1\Service\Configuration\WebhookList;
 use Twilio\Rest\Conversations\V1\Service\Configuration\NotificationList;
+use Twilio\Rest\Conversations\V1\Service\Configuration\WebhookList;
 
 
 /**
- * @property WebhookList $webhooks
  * @property NotificationList $notifications
- * @method \Twilio\Rest\Conversations\V1\Service\Configuration\WebhookContext webhooks()
+ * @property WebhookList $webhooks
  * @method \Twilio\Rest\Conversations\V1\Service\Configuration\NotificationContext notifications()
+ * @method \Twilio\Rest\Conversations\V1\Service\Configuration\WebhookContext webhooks()
  */
 class ConfigurationList extends ListResource
     {
-    protected $_webhooks = null;
     protected $_notifications = null;
+    protected $_webhooks = null;
 
     /**
      * Construct the ConfigurationList
@@ -69,20 +69,6 @@ class ConfigurationList extends ListResource
     }
 
     /**
-     * Access the webhooks
-     */
-    protected function getWebhooks(): WebhookList
-    {
-        if (!$this->_webhooks) {
-            $this->_webhooks = new WebhookList(
-                $this->version,
-                $this->solution['chatServiceSid']
-            );
-        }
-        return $this->_webhooks;
-    }
-
-    /**
      * Access the notifications
      */
     protected function getNotifications(): NotificationList
@@ -94,6 +80,20 @@ class ConfigurationList extends ListResource
             );
         }
         return $this->_notifications;
+    }
+
+    /**
+     * Access the webhooks
+     */
+    protected function getWebhooks(): WebhookList
+    {
+        if (!$this->_webhooks) {
+            $this->_webhooks = new WebhookList(
+                $this->version,
+                $this->solution['chatServiceSid']
+            );
+        }
+        return $this->_webhooks;
     }
 
     /**

@@ -23,7 +23,6 @@ use Twilio\Options;
 use Twilio\Values;
 use Twilio\Version;
 use Twilio\InstanceContext;
-use Twilio\Rest\Api\V2010\Account\Call\TranscriptionList;
 use Twilio\Rest\Api\V2010\Account\Call\RecordingList;
 use Twilio\Rest\Api\V2010\Account\Call\UserDefinedMessageSubscriptionList;
 use Twilio\Rest\Api\V2010\Account\Call\EventList;
@@ -35,7 +34,6 @@ use Twilio\Rest\Api\V2010\Account\Call\PaymentList;
 
 
 /**
- * @property TranscriptionList $transcriptions
  * @property RecordingList $recordings
  * @property UserDefinedMessageSubscriptionList $userDefinedMessageSubscriptions
  * @property EventList $events
@@ -44,7 +42,6 @@ use Twilio\Rest\Api\V2010\Account\Call\PaymentList;
  * @property SiprecList $siprec
  * @property StreamList $streams
  * @property PaymentList $payments
- * @method \Twilio\Rest\Api\V2010\Account\Call\TranscriptionContext transcriptions(string $sid)
  * @method \Twilio\Rest\Api\V2010\Account\Call\SiprecContext siprec(string $sid)
  * @method \Twilio\Rest\Api\V2010\Account\Call\UserDefinedMessageSubscriptionContext userDefinedMessageSubscriptions(string $sid)
  * @method \Twilio\Rest\Api\V2010\Account\Call\PaymentContext payments(string $sid)
@@ -54,7 +51,6 @@ use Twilio\Rest\Api\V2010\Account\Call\PaymentList;
  */
 class CallContext extends InstanceContext
     {
-    protected $_transcriptions;
     protected $_recordings;
     protected $_userDefinedMessageSubscriptions;
     protected $_events;
@@ -100,8 +96,7 @@ class CallContext extends InstanceContext
     public function delete(): bool
     {
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded' ]);
-        return $this->version->delete('DELETE', $this->uri, [], [], $headers);
+        return $this->version->delete('DELETE', $this->uri);
     }
 
 
@@ -114,8 +109,7 @@ class CallContext extends InstanceContext
     public function fetch(): CallInstance
     {
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->fetch('GET', $this->uri, [], [], $headers);
+        $payload = $this->version->fetch('GET', $this->uri, [], []);
 
         return new CallInstance(
             $this->version,
@@ -159,8 +153,7 @@ class CallContext extends InstanceContext
                 $options['timeLimit'],
         ]);
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->update('POST', $this->uri, [], $data, $headers);
+        $payload = $this->version->update('POST', $this->uri, [], $data);
 
         return new CallInstance(
             $this->version,
@@ -170,22 +163,6 @@ class CallContext extends InstanceContext
         );
     }
 
-
-    /**
-     * Access the transcriptions
-     */
-    protected function getTranscriptions(): TranscriptionList
-    {
-        if (!$this->_transcriptions) {
-            $this->_transcriptions = new TranscriptionList(
-                $this->version,
-                $this->solution['accountSid'],
-                $this->solution['sid']
-            );
-        }
-
-        return $this->_transcriptions;
-    }
 
     /**
      * Access the recordings

@@ -75,8 +75,7 @@ class RecordingContext extends InstanceContext
     public function delete(): bool
     {
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded' ]);
-        return $this->version->delete('DELETE', $this->uri, [], [], $headers);
+        return $this->version->delete('DELETE', $this->uri);
     }
 
 
@@ -97,8 +96,7 @@ class RecordingContext extends InstanceContext
                 Serialize::booleanToString($options['includeSoftDeleted']),
         ]);
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->fetch('GET', $this->uri, $params, [], $headers);
+        $payload = $this->version->fetch('GET', $this->uri, $params, []);
 
         return new RecordingInstance(
             $this->version,

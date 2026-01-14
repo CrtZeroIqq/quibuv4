@@ -62,8 +62,7 @@ class SinkValidateList extends ListResource
                 $testId,
         ]);
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->create('POST', $this->uri, [], $data, $headers);
+        $payload = $this->version->create('POST', $this->uri, [], $data);
 
         return new SinkValidateInstance(
             $this->version,

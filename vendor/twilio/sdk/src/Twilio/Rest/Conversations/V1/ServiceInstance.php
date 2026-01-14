@@ -22,10 +22,9 @@ use Twilio\InstanceResource;
 use Twilio\Values;
 use Twilio\Version;
 use Twilio\Deserialize;
-use Twilio\Rest\Conversations\V1\Service\ParticipantConversationList;
 use Twilio\Rest\Conversations\V1\Service\UserList;
 use Twilio\Rest\Conversations\V1\Service\BindingList;
-use Twilio\Rest\Conversations\V1\Service\ConversationWithParticipantsList;
+use Twilio\Rest\Conversations\V1\Service\ParticipantConversationList;
 use Twilio\Rest\Conversations\V1\Service\ConversationList;
 use Twilio\Rest\Conversations\V1\Service\RoleList;
 use Twilio\Rest\Conversations\V1\Service\ConfigurationList;
@@ -42,10 +41,9 @@ use Twilio\Rest\Conversations\V1\Service\ConfigurationList;
  */
 class ServiceInstance extends InstanceResource
 {
-    protected $_participantConversations;
     protected $_users;
     protected $_bindings;
-    protected $_conversationWithParticipants;
+    protected $_participantConversations;
     protected $_conversations;
     protected $_roles;
     protected $_configuration;
@@ -57,7 +55,7 @@ class ServiceInstance extends InstanceResource
      * @param mixed[] $payload The response payload
      * @param string $sid A 34 character string that uniquely identifies this resource.
      */
-    public function __construct(Version $version, array $payload, ?string $sid = null)
+    public function __construct(Version $version, array $payload, string $sid = null)
     {
         parent::__construct($version);
 
@@ -118,14 +116,6 @@ class ServiceInstance extends InstanceResource
     }
 
     /**
-     * Access the participantConversations
-     */
-    protected function getParticipantConversations(): ParticipantConversationList
-    {
-        return $this->proxy()->participantConversations;
-    }
-
-    /**
      * Access the users
      */
     protected function getUsers(): UserList
@@ -142,11 +132,11 @@ class ServiceInstance extends InstanceResource
     }
 
     /**
-     * Access the conversationWithParticipants
+     * Access the participantConversations
      */
-    protected function getConversationWithParticipants(): ConversationWithParticipantsList
+    protected function getParticipantConversations(): ParticipantConversationList
     {
-        return $this->proxy()->conversationWithParticipants;
+        return $this->proxy()->participantConversations;
     }
 
     /**

@@ -38,7 +38,7 @@ use Twilio\Rest\Taskrouter\V1\Workspace\Workflow\WorkflowRealTimeStatisticsList;
  * @property string|null $fallbackAssignmentCallbackUrl
  * @property string|null $friendlyName
  * @property string|null $sid
- * @property int $taskReservationTimeout
+ * @property int|null $taskReservationTimeout
  * @property string|null $workspaceSid
  * @property string|null $url
  * @property array|null $links
@@ -57,7 +57,7 @@ class WorkflowInstance extends InstanceResource
      * @param string $workspaceSid The SID of the Workspace that the new Workflow to create belongs to.
      * @param string $sid The SID of the Workflow resource to delete.
      */
-    public function __construct(Version $version, array $payload, string $workspaceSid, ?string $sid = null)
+    public function __construct(Version $version, array $payload, string $workspaceSid, string $sid = null)
     {
         parent::__construct($version);
 

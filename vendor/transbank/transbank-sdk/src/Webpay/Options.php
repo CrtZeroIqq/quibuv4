@@ -34,9 +34,9 @@ class Options
 
     public function __construct($apiKey, $commerceCode, $integrationType = self::ENVIRONMENT_INTEGRATION)
     {
-        $this->apiKey = $apiKey;
-        $this->commerceCode = $commerceCode;
-        $this->integrationType = $integrationType;
+        $this->setApiKey($apiKey);
+        $this->setCommerceCode($commerceCode);
+        $this->setIntegrationType($integrationType);
     }
 
     public static function forProduction($commerceCode, $apiKey)

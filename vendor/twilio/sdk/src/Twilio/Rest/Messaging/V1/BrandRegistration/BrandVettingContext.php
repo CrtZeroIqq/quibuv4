@@ -18,7 +18,6 @@
 namespace Twilio\Rest\Messaging\V1\BrandRegistration;
 
 use Twilio\Exceptions\TwilioException;
-use Twilio\Values;
 use Twilio\Version;
 use Twilio\InstanceContext;
 
@@ -61,8 +60,7 @@ class BrandVettingContext extends InstanceContext
     public function fetch(): BrandVettingInstance
     {
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->fetch('GET', $this->uri, [], [], $headers);
+        $payload = $this->version->fetch('GET', $this->uri, [], []);
 
         return new BrandVettingInstance(
             $this->version,

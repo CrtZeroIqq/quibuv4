@@ -16,7 +16,6 @@
 
 namespace Twilio\Rest\Messaging\V1\Service;
 
-use Twilio\Exceptions\TwilioException;
 use Twilio\ListResource;
 use Twilio\Stream;
 use Twilio\Values;
@@ -29,7 +28,7 @@ class ChannelSenderList extends ListResource
      * Construct the ChannelSenderList
      *
      * @param Version $version Version that contains the resource
-     * @param string $messagingServiceSid The SID of the [Service](https://www.twilio.com/docs/chat/rest/service-resource) to create the resource under.
+     * @param string $messagingServiceSid The SID of the [Service](https://www.twilio.com/docs/chat/rest/service-resource) to fetch the resource from.
      */
     public function __construct(
         Version $version,
@@ -49,32 +48,6 @@ class ChannelSenderList extends ListResource
     }
 
     /**
-     * Create the ChannelSenderInstance
-     *
-     * @param string $sid The SID of the Channel Sender being added to the Service.
-     * @return ChannelSenderInstance Created ChannelSenderInstance
-     * @throws TwilioException When an HTTP error occurs.
-     */
-    public function create(string $sid): ChannelSenderInstance
-    {
-
-        $data = Values::of([
-            'Sid' =>
-                $sid,
-        ]);
-
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->create('POST', $this->uri, [], $data, $headers);
-
-        return new ChannelSenderInstance(
-            $this->version,
-            $payload,
-            $this->solution['messagingServiceSid']
-        );
-    }
-
-
-    /**
      * Reads ChannelSenderInstance records from the API as a list.
      * Unlike stream(), this operation is eager and will load `limit` records into
      * memory before returning.
@@ -89,7 +62,7 @@ class ChannelSenderList extends ListResource
      *                        efficient page size, i.e. min(limit, 1000)
      * @return ChannelSenderInstance[] Array of results
      */
-    public function read(?int $limit = null, $pageSize = null): array
+    public function read(int $limit = null, $pageSize = null): array
     {
         return \iterator_to_array($this->stream($limit, $pageSize), false);
     }
@@ -112,7 +85,7 @@ class ChannelSenderList extends ListResource
      *                        efficient page size, i.e. min(limit, 1000)
      * @return Stream stream of results
      */
-    public function stream(?int $limit = null, $pageSize = null): Stream
+    public function stream(int $limit = null, $pageSize = null): Stream
     {
         $limits = $this->version->readLimits($limit, $pageSize);
 
@@ -143,8 +116,7 @@ class ChannelSenderList extends ListResource
             'PageSize' => $pageSize,
         ]);
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json']);
-        $response = $this->version->page('GET', $this->uri, $params, [], $headers);
+        $response = $this->version->page('GET', $this->uri, $params);
 
         return new ChannelSenderPage($this->version, $response, $this->solution);
     }
@@ -170,7 +142,7 @@ class ChannelSenderList extends ListResource
     /**
      * Constructs a ChannelSenderContext
      *
-     * @param string $sid The SID of the Channel Sender resource to delete.
+     * @param string $sid The SID of the ChannelSender resource to fetch.
      */
     public function getContext(
         string $sid

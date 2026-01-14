@@ -37,7 +37,7 @@ use Twilio\Deserialize;
  * @property bool|null $wasEdited
  * @property string|null $from
  * @property string|null $body
- * @property int $index
+ * @property int|null $index
  * @property string|null $url
  */
 class MessageInstance extends InstanceResource
@@ -51,7 +51,7 @@ class MessageInstance extends InstanceResource
      * @param string $channelSid 
      * @param string $sid 
      */
-    public function __construct(Version $version, array $payload, string $serviceSid, string $channelSid, ?string $sid = null)
+    public function __construct(Version $version, array $payload, string $serviceSid, string $channelSid, string $sid = null)
     {
         parent::__construct($version);
 

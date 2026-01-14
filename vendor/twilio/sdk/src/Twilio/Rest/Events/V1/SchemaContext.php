@@ -19,7 +19,6 @@ namespace Twilio\Rest\Events\V1;
 
 use Twilio\Exceptions\TwilioException;
 use Twilio\ListResource;
-use Twilio\Values;
 use Twilio\Version;
 use Twilio\InstanceContext;
 use Twilio\Rest\Events\V1\Schema\SchemaVersionList;
@@ -64,8 +63,7 @@ class SchemaContext extends InstanceContext
     public function fetch(): SchemaInstance
     {
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->fetch('GET', $this->uri, [], [], $headers);
+        $payload = $this->version->fetch('GET', $this->uri, [], []);
 
         return new SchemaInstance(
             $this->version,

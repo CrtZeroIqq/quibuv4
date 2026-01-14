@@ -32,7 +32,7 @@ use Twilio\Deserialize;
  * @property string|null $friendlyName
  * @property bool|null $dataEnabled
  * @property string|null $dataMetering
- * @property int $dataLimit
+ * @property int|null $dataLimit
  * @property bool|null $messagingEnabled
  * @property bool|null $voiceEnabled
  * @property bool|null $nationalRoamingEnabled
@@ -50,7 +50,7 @@ class RatePlanInstance extends InstanceResource
      * @param mixed[] $payload The response payload
      * @param string $sid 
      */
-    public function __construct(Version $version, array $payload, ?string $sid = null)
+    public function __construct(Version $version, array $payload, string $sid = null)
     {
         parent::__construct($version);
 

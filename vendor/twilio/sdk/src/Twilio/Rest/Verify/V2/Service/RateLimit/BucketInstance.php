@@ -30,8 +30,8 @@ use Twilio\Deserialize;
  * @property string|null $rateLimitSid
  * @property string|null $serviceSid
  * @property string|null $accountSid
- * @property int $max
- * @property int $interval
+ * @property int|null $max
+ * @property int|null $interval
  * @property \DateTime|null $dateCreated
  * @property \DateTime|null $dateUpdated
  * @property string|null $url
@@ -47,7 +47,7 @@ class BucketInstance extends InstanceResource
      * @param string $rateLimitSid The Twilio-provided string that uniquely identifies the Rate Limit resource.
      * @param string $sid A 34 character string that uniquely identifies this Bucket.
      */
-    public function __construct(Version $version, array $payload, string $serviceSid, string $rateLimitSid, ?string $sid = null)
+    public function __construct(Version $version, array $payload, string $serviceSid, string $rateLimitSid, string $sid = null)
     {
         parent::__construct($version);
 

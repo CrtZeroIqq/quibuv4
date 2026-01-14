@@ -2,8 +2,6 @@
 
 namespace Transbank\Patpass\PatpassByWebpay\Responses;
 
-use Transbank\Utils\Utils;
-
 class TransactionCreateResponse
 {
     public $token;
@@ -16,8 +14,10 @@ class TransactionCreateResponse
      */
     public function __construct($json)
     {
-        $this->token = Utils::returnValueIfExists($json, 'token');
-        $this->url = Utils::returnValueIfExists($json, 'url');
+        $token = isset($json['token']) ? $json['token'] : null;
+        $this->setToken($token);
+        $url = isset($json['url']) ? $json['url'] : null;
+        $this->setUrl($url);
     }
 
     /**

@@ -33,7 +33,7 @@ use Twilio\Deserialize;
  * @property string|null $factorFriendlyName
  * @property string|null $token
  * @property string|null $url
- * @property int $ttl
+ * @property int|null $ttl
  * @property \DateTime|null $dateCreated
  */
 class AccessTokenInstance extends InstanceResource
@@ -46,7 +46,7 @@ class AccessTokenInstance extends InstanceResource
      * @param string $serviceSid The unique SID identifier of the Service.
      * @param string $sid A 34 character string that uniquely identifies this Access Token.
      */
-    public function __construct(Version $version, array $payload, string $serviceSid, ?string $sid = null)
+    public function __construct(Version $version, array $payload, string $serviceSid, string $sid = null)
     {
         parent::__construct($version);
 

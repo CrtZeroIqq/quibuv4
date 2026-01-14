@@ -32,7 +32,6 @@ use Twilio\Deserialize;
  * @property string|null $mimeType
  * @property string $status
  * @property string|null $failureReason
- * @property array[]|null $errors
  * @property string|null $type
  * @property array|null $attributes
  * @property \DateTime|null $dateCreated
@@ -48,7 +47,7 @@ class SupportingDocumentInstance extends InstanceResource
      * @param mixed[] $payload The response payload
      * @param string $sid The unique string created by Twilio to identify the Supporting Document resource.
      */
-    public function __construct(Version $version, array $payload, ?string $sid = null)
+    public function __construct(Version $version, array $payload, string $sid = null)
     {
         parent::__construct($version);
 
@@ -60,7 +59,6 @@ class SupportingDocumentInstance extends InstanceResource
             'mimeType' => Values::array_get($payload, 'mime_type'),
             'status' => Values::array_get($payload, 'status'),
             'failureReason' => Values::array_get($payload, 'failure_reason'),
-            'errors' => Values::array_get($payload, 'errors'),
             'type' => Values::array_get($payload, 'type'),
             'attributes' => Values::array_get($payload, 'attributes'),
             'dateCreated' => Deserialize::dateTime(Values::array_get($payload, 'date_created')),

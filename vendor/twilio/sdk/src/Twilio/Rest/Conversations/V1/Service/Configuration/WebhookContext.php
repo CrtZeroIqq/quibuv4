@@ -58,8 +58,7 @@ class WebhookContext extends InstanceContext
     public function fetch(): WebhookInstance
     {
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->fetch('GET', $this->uri, [], [], $headers);
+        $payload = $this->version->fetch('GET', $this->uri, [], []);
 
         return new WebhookInstance(
             $this->version,
@@ -92,8 +91,7 @@ class WebhookContext extends InstanceContext
                 $options['method'],
         ]);
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->update('POST', $this->uri, [], $data, $headers);
+        $payload = $this->version->update('POST', $this->uri, [], $data);
 
         return new WebhookInstance(
             $this->version,

@@ -65,8 +65,7 @@ class AwsList extends ListResource
                 $options['accountSid'],
         ]);
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->create('POST', $this->uri, [], $data, $headers);
+        $payload = $this->version->create('POST', $this->uri, [], $data);
 
         return new AwsInstance(
             $this->version,
@@ -90,7 +89,7 @@ class AwsList extends ListResource
      *                        efficient page size, i.e. min(limit, 1000)
      * @return AwsInstance[] Array of results
      */
-    public function read(?int $limit = null, $pageSize = null): array
+    public function read(int $limit = null, $pageSize = null): array
     {
         return \iterator_to_array($this->stream($limit, $pageSize), false);
     }
@@ -113,7 +112,7 @@ class AwsList extends ListResource
      *                        efficient page size, i.e. min(limit, 1000)
      * @return Stream stream of results
      */
-    public function stream(?int $limit = null, $pageSize = null): Stream
+    public function stream(int $limit = null, $pageSize = null): Stream
     {
         $limits = $this->version->readLimits($limit, $pageSize);
 
@@ -144,8 +143,7 @@ class AwsList extends ListResource
             'PageSize' => $pageSize,
         ]);
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json']);
-        $response = $this->version->page('GET', $this->uri, $params, [], $headers);
+        $response = $this->version->page('GET', $this->uri, $params);
 
         return new AwsPage($this->version, $response, $this->solution);
     }

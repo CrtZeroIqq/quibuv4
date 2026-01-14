@@ -39,7 +39,7 @@ use Twilio\Rest\IpMessaging\V2\Service\User\UserChannelList;
  * @property bool|null $isNotifiable
  * @property \DateTime|null $dateCreated
  * @property \DateTime|null $dateUpdated
- * @property int $joinedChannelsCount
+ * @property int|null $joinedChannelsCount
  * @property array|null $links
  * @property string|null $url
  */
@@ -56,7 +56,7 @@ class UserInstance extends InstanceResource
      * @param string $serviceSid 
      * @param string $sid 
      */
-    public function __construct(Version $version, array $payload, string $serviceSid, ?string $sid = null)
+    public function __construct(Version $version, array $payload, string $serviceSid, string $sid = null)
     {
         parent::__construct($version);
 

@@ -40,7 +40,7 @@ use Twilio\Deserialize;
  * @property array|null $encryptionDetails
  * @property string|null $priceUnit
  * @property string $status
- * @property int $channels
+ * @property int|null $channels
  * @property string $source
  * @property int|null $errorCode
  * @property string|null $track
@@ -56,7 +56,7 @@ class RecordingInstance extends InstanceResource
      * @param string $callSid The SID of the [Call](https://www.twilio.com/docs/voice/api/call-resource) to associate the resource with.
      * @param string $sid The Twilio-provided string that uniquely identifies the Recording resource to delete.
      */
-    public function __construct(Version $version, array $payload, string $accountSid, string $callSid, ?string $sid = null)
+    public function __construct(Version $version, array $payload, string $accountSid, string $callSid, string $sid = null)
     {
         parent::__construct($version);
 

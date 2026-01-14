@@ -28,29 +28,27 @@ use Twilio\Rest\Taskrouter\V1\Workspace\Task\ReservationList;
 
 /**
  * @property string|null $accountSid
- * @property int $age
+ * @property int|null $age
  * @property string $assignmentStatus
  * @property string|null $attributes
  * @property string|null $addons
  * @property \DateTime|null $dateCreated
  * @property \DateTime|null $dateUpdated
  * @property \DateTime|null $taskQueueEnteredDate
- * @property int $priority
+ * @property int|null $priority
  * @property string|null $reason
  * @property string|null $sid
  * @property string|null $taskQueueSid
  * @property string|null $taskQueueFriendlyName
  * @property string|null $taskChannelSid
  * @property string|null $taskChannelUniqueName
- * @property int $timeout
+ * @property int|null $timeout
  * @property string|null $workflowSid
  * @property string|null $workflowFriendlyName
  * @property string|null $workspaceSid
  * @property string|null $url
  * @property array|null $links
  * @property \DateTime|null $virtualStartTime
- * @property bool|null $ignoreCapacity
- * @property string|null $routingTarget
  */
 class TaskInstance extends InstanceResource
 {
@@ -64,7 +62,7 @@ class TaskInstance extends InstanceResource
      * @param string $workspaceSid The SID of the Workspace that the new Task belongs to.
      * @param string $sid The SID of the Task resource to delete.
      */
-    public function __construct(Version $version, array $payload, string $workspaceSid, ?string $sid = null)
+    public function __construct(Version $version, array $payload, string $workspaceSid, string $sid = null)
     {
         parent::__construct($version);
 
@@ -92,8 +90,6 @@ class TaskInstance extends InstanceResource
             'url' => Values::array_get($payload, 'url'),
             'links' => Values::array_get($payload, 'links'),
             'virtualStartTime' => Deserialize::dateTime(Values::array_get($payload, 'virtual_start_time')),
-            'ignoreCapacity' => Values::array_get($payload, 'ignore_capacity'),
-            'routingTarget' => Values::array_get($payload, 'routing_target'),
         ];
 
         $this->solution = ['workspaceSid' => $workspaceSid, 'sid' => $sid ?: $this->properties['sid'], ];

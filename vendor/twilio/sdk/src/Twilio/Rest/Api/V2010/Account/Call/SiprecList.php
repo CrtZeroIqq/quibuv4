@@ -475,8 +475,7 @@ class SiprecList extends ListResource
                 $options['parameter99Value'],
         ]);
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->create('POST', $this->uri, [], $data, $headers);
+        $payload = $this->version->create('POST', $this->uri, [], $data);
 
         return new SiprecInstance(
             $this->version,

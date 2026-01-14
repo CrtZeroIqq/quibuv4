@@ -38,7 +38,7 @@ use Twilio\Rest\Chat\V1\Service\User\UserChannelList;
  * @property bool|null $isNotifiable
  * @property \DateTime|null $dateCreated
  * @property \DateTime|null $dateUpdated
- * @property int $joinedChannelsCount
+ * @property int|null $joinedChannelsCount
  * @property array|null $links
  * @property string|null $url
  */
@@ -54,7 +54,7 @@ class UserInstance extends InstanceResource
      * @param string $serviceSid The SID of the [Service](https://www.twilio.com/docs/api/chat/rest/services) to create the resource under.
      * @param string $sid The Twilio-provided string that uniquely identifies the User resource to delete.
      */
-    public function __construct(Version $version, array $payload, string $serviceSid, ?string $sid = null)
+    public function __construct(Version $version, array $payload, string $serviceSid, string $sid = null)
     {
         parent::__construct($version);
 

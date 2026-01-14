@@ -18,7 +18,6 @@
 namespace Twilio\Rest\Numbers\V2\RegulatoryCompliance\Bundle;
 
 use Twilio\Exceptions\TwilioException;
-use Twilio\Values;
 use Twilio\Version;
 use Twilio\InstanceContext;
 
@@ -61,8 +60,7 @@ class ItemAssignmentContext extends InstanceContext
     public function delete(): bool
     {
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded' ]);
-        return $this->version->delete('DELETE', $this->uri, [], [], $headers);
+        return $this->version->delete('DELETE', $this->uri);
     }
 
 
@@ -75,8 +73,7 @@ class ItemAssignmentContext extends InstanceContext
     public function fetch(): ItemAssignmentInstance
     {
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->fetch('GET', $this->uri, [], [], $headers);
+        $payload = $this->version->fetch('GET', $this->uri, [], []);
 
         return new ItemAssignmentInstance(
             $this->version,

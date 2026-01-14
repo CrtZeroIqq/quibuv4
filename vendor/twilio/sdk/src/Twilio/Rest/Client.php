@@ -20,7 +20,6 @@ use Twilio\Base\BaseClient as BaseClient;
  *
  * @property Accounts $accounts
  * @property Api $api
- * @property Assistants $assistants
  * @property Bulkexports $bulkexports
  * @property Chat $chat
  * @property Content $content
@@ -28,14 +27,12 @@ use Twilio\Base\BaseClient as BaseClient;
  * @property Events $events
  * @property FlexApi $flexApi
  * @property FrontlineApi $frontlineApi
- * @property PreviewIam $previewIam
- * @property Iam $iam
  * @property Insights $insights
  * @property Intelligence $intelligence
  * @property IpMessaging $ipMessaging
  * @property Lookups $lookups
- * @property Marketplace $marketplace
  * @property Messaging $messaging
+ * @property Microvisor $microvisor
  * @property Monitor $monitor
  * @property Notify $notify
  * @property Numbers $numbers
@@ -101,7 +98,6 @@ use Twilio\Base\BaseClient as BaseClient;
 class Client extends BaseClient {
     protected $_accounts;
     protected $_api;
-    protected $_assistants;
     protected $_bulkexports;
     protected $_chat;
     protected $_content;
@@ -109,14 +105,12 @@ class Client extends BaseClient {
     protected $_events;
     protected $_flexApi;
     protected $_frontlineApi;
-    protected $_previewIam;
-    protected $_iam;
     protected $_insights;
     protected $_intelligence;
     protected $_ipMessaging;
     protected $_lookups;
-    protected $_marketplace;
     protected $_messaging;
+    protected $_microvisor;
     protected $_monitor;
     protected $_notify;
     protected $_numbers;
@@ -158,17 +152,6 @@ class Client extends BaseClient {
             $this->_api = new Api($this);
         }
         return $this->_api;
-    }
-    /**
-     * Access the Assistants Twilio Domain
-     *
-     * @return Assistants Assistants Twilio Domain
-     */
-    protected function getAssistants(): Assistants {
-        if (!$this->_assistants) {
-            $this->_assistants = new Assistants($this);
-        }
-        return $this->_assistants;
     }
     /**
      * Access the Bulkexports Twilio Domain
@@ -248,28 +231,6 @@ class Client extends BaseClient {
         return $this->_frontlineApi;
     }
     /**
-     * Access the PreviewIam Twilio Domain
-     *
-     * @return PreviewIam PreviewIam Twilio Domain
-     */
-    protected function getPreviewIam(): PreviewIam {
-        if (!$this->_previewIam) {
-            $this->_previewIam = new PreviewIam($this);
-        }
-        return $this->_previewIam;
-    }
-    /**
-     * Access the Iam Twilio Domain
-     *
-     * @return Iam Iam Twilio Domain
-     */
-    protected function getIam(): Iam {
-        if (!$this->_iam) {
-            $this->_iam = new Iam($this);
-        }
-        return $this->_iam;
-    }
-    /**
      * Access the Insights Twilio Domain
      *
      * @return Insights Insights Twilio Domain
@@ -314,17 +275,6 @@ class Client extends BaseClient {
         return $this->_lookups;
     }
     /**
-     * Access the Marketplace Twilio Domain
-     *
-     * @return Marketplace Marketplace Twilio Domain
-     */
-    protected function getMarketplace(): Marketplace {
-        if (!$this->_marketplace) {
-            $this->_marketplace = new Marketplace($this);
-        }
-        return $this->_marketplace;
-    }
-    /**
      * Access the Messaging Twilio Domain
      *
      * @return Messaging Messaging Twilio Domain
@@ -334,6 +284,17 @@ class Client extends BaseClient {
             $this->_messaging = new Messaging($this);
         }
         return $this->_messaging;
+    }
+    /**
+     * Access the Microvisor Twilio Domain
+     *
+     * @return Microvisor Microvisor Twilio Domain
+     */
+    protected function getMicrovisor(): Microvisor {
+        if (!$this->_microvisor) {
+            $this->_microvisor = new Microvisor($this);
+        }
+        return $this->_microvisor;
     }
     /**
      * Access the Monitor Twilio Domain

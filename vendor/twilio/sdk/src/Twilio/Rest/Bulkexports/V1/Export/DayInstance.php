@@ -26,7 +26,7 @@ use Twilio\Version;
 /**
  * @property string|null $redirectTo
  * @property string|null $day
- * @property int $size
+ * @property int|null $size
  * @property string|null $createDate
  * @property string|null $friendlyName
  * @property string|null $resourceType
@@ -41,7 +41,7 @@ class DayInstance extends InstanceResource
      * @param string $resourceType The type of communication – Messages, Calls, Conferences, and Participants
      * @param string $day The ISO 8601 format date of the resources in the file, for a UTC day
      */
-    public function __construct(Version $version, array $payload, string $resourceType, ?string $day = null)
+    public function __construct(Version $version, array $payload, string $resourceType, string $day = null)
     {
         parent::__construct($version);
 

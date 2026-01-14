@@ -26,7 +26,6 @@ use Twilio\InstanceContext;
 use Twilio\Serialize;
 use Twilio\Rest\Messaging\V1\Service\AlphaSenderList;
 use Twilio\Rest\Messaging\V1\Service\PhoneNumberList;
-use Twilio\Rest\Messaging\V1\Service\DestinationAlphaSenderList;
 use Twilio\Rest\Messaging\V1\Service\UsAppToPersonUsecaseList;
 use Twilio\Rest\Messaging\V1\Service\ChannelSenderList;
 use Twilio\Rest\Messaging\V1\Service\ShortCodeList;
@@ -36,7 +35,6 @@ use Twilio\Rest\Messaging\V1\Service\UsAppToPersonList;
 /**
  * @property AlphaSenderList $alphaSenders
  * @property PhoneNumberList $phoneNumbers
- * @property DestinationAlphaSenderList $destinationAlphaSenders
  * @property UsAppToPersonUsecaseList $usAppToPersonUsecases
  * @property ChannelSenderList $channelSenders
  * @property ShortCodeList $shortCodes
@@ -45,14 +43,12 @@ use Twilio\Rest\Messaging\V1\Service\UsAppToPersonList;
  * @method \Twilio\Rest\Messaging\V1\Service\UsAppToPersonContext usAppToPerson(string $sid)
  * @method \Twilio\Rest\Messaging\V1\Service\PhoneNumberContext phoneNumbers(string $sid)
  * @method \Twilio\Rest\Messaging\V1\Service\AlphaSenderContext alphaSenders(string $sid)
- * @method \Twilio\Rest\Messaging\V1\Service\DestinationAlphaSenderContext destinationAlphaSenders(string $sid)
  * @method \Twilio\Rest\Messaging\V1\Service\ChannelSenderContext channelSenders(string $sid)
  */
 class ServiceContext extends InstanceContext
     {
     protected $_alphaSenders;
     protected $_phoneNumbers;
-    protected $_destinationAlphaSenders;
     protected $_usAppToPersonUsecases;
     protected $_channelSenders;
     protected $_shortCodes;
@@ -89,8 +85,7 @@ class ServiceContext extends InstanceContext
     public function delete(): bool
     {
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded' ]);
-        return $this->version->delete('DELETE', $this->uri, [], [], $headers);
+        return $this->version->delete('DELETE', $this->uri);
     }
 
 
@@ -103,8 +98,7 @@ class ServiceContext extends InstanceContext
     public function fetch(): ServiceInstance
     {
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->fetch('GET', $this->uri, [], [], $headers);
+        $payload = $this->version->fetch('GET', $this->uri, [], []);
 
         return new ServiceInstance(
             $this->version,
@@ -161,8 +155,7 @@ class ServiceContext extends InstanceContext
                 Serialize::booleanToString($options['useInboundWebhookOnNumber']),
         ]);
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->update('POST', $this->uri, [], $data, $headers);
+        $payload = $this->version->update('POST', $this->uri, [], $data);
 
         return new ServiceInstance(
             $this->version,
@@ -200,21 +193,6 @@ class ServiceContext extends InstanceContext
         }
 
         return $this->_phoneNumbers;
-    }
-
-    /**
-     * Access the destinationAlphaSenders
-     */
-    protected function getDestinationAlphaSenders(): DestinationAlphaSenderList
-    {
-        if (!$this->_destinationAlphaSenders) {
-            $this->_destinationAlphaSenders = new DestinationAlphaSenderList(
-                $this->version,
-                $this->solution['sid']
-            );
-        }
-
-        return $this->_destinationAlphaSenders;
     }
 
     /**

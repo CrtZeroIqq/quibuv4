@@ -19,7 +19,6 @@ namespace Twilio\Rest\Serverless\V1\Service\TwilioFunction;
 
 use Twilio\Exceptions\TwilioException;
 use Twilio\ListResource;
-use Twilio\Values;
 use Twilio\Version;
 use Twilio\InstanceContext;
 use Twilio\Rest\Serverless\V1\Service\TwilioFunction\FunctionVersion\FunctionVersionContentList;
@@ -74,8 +73,7 @@ class FunctionVersionContext extends InstanceContext
     public function fetch(): FunctionVersionInstance
     {
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->fetch('GET', $this->uri, [], [], $headers);
+        $payload = $this->version->fetch('GET', $this->uri, [], []);
 
         return new FunctionVersionInstance(
             $this->version,

@@ -12,9 +12,12 @@ class TransactionInstallmentsResponse
 
     public function __construct($json)
     {
-        $this->installmentsAmount = Utils::returnValueIfExists($json, 'installments_amount');
-        $this->idQueryInstallments = Utils::returnValueIfExists($json, 'id_query_installments');
-        $this->deferredPeriods = Utils::returnValueIfExists($json, 'deferred_periods');
+        $installmentsAmount = Utils::returnValueIfExists($json, 'installments_amount');
+        $this->setInstallmentsAmount($installmentsAmount);
+        $idQueryInstallments = Utils::returnValueIfExists($json, 'id_query_installments');
+        $this->setIdQueryInstallments($idQueryInstallments);
+        $deferredPeriods = Utils::returnValueIfExists($json, 'deferred_periods');
+        $this->setDeferredPeriods($deferredPeriods);
     }
 
     /**

@@ -19,25 +19,24 @@ namespace Twilio\Rest\Intelligence\V2;
 
 use Twilio\Exceptions\TwilioException;
 use Twilio\ListResource;
-use Twilio\Values;
 use Twilio\Version;
 use Twilio\InstanceContext;
-use Twilio\Rest\Intelligence\V2\Transcript\SentenceList;
 use Twilio\Rest\Intelligence\V2\Transcript\OperatorResultList;
+use Twilio\Rest\Intelligence\V2\Transcript\SentenceList;
 use Twilio\Rest\Intelligence\V2\Transcript\MediaList;
 
 
 /**
- * @property SentenceList $sentences
  * @property OperatorResultList $operatorResults
+ * @property SentenceList $sentences
  * @property MediaList $media
- * @method \Twilio\Rest\Intelligence\V2\Transcript\MediaContext media()
  * @method \Twilio\Rest\Intelligence\V2\Transcript\OperatorResultContext operatorResults(string $operatorSid)
+ * @method \Twilio\Rest\Intelligence\V2\Transcript\MediaContext media()
  */
 class TranscriptContext extends InstanceContext
     {
-    protected $_sentences;
     protected $_operatorResults;
+    protected $_sentences;
     protected $_media;
 
     /**
@@ -71,8 +70,7 @@ class TranscriptContext extends InstanceContext
     public function delete(): bool
     {
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded' ]);
-        return $this->version->delete('DELETE', $this->uri, [], [], $headers);
+        return $this->version->delete('DELETE', $this->uri);
     }
 
 
@@ -85,8 +83,7 @@ class TranscriptContext extends InstanceContext
     public function fetch(): TranscriptInstance
     {
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->fetch('GET', $this->uri, [], [], $headers);
+        $payload = $this->version->fetch('GET', $this->uri, [], []);
 
         return new TranscriptInstance(
             $this->version,
@@ -95,21 +92,6 @@ class TranscriptContext extends InstanceContext
         );
     }
 
-
-    /**
-     * Access the sentences
-     */
-    protected function getSentences(): SentenceList
-    {
-        if (!$this->_sentences) {
-            $this->_sentences = new SentenceList(
-                $this->version,
-                $this->solution['sid']
-            );
-        }
-
-        return $this->_sentences;
-    }
 
     /**
      * Access the operatorResults
@@ -124,6 +106,21 @@ class TranscriptContext extends InstanceContext
         }
 
         return $this->_operatorResults;
+    }
+
+    /**
+     * Access the sentences
+     */
+    protected function getSentences(): SentenceList
+    {
+        if (!$this->_sentences) {
+            $this->_sentences = new SentenceList(
+                $this->version,
+                $this->solution['sid']
+            );
+        }
+
+        return $this->_sentences;
     }
 
     /**

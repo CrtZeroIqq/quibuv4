@@ -30,8 +30,6 @@ use Twilio\Deserialize;
  * @property \DateTime|null $dateCreated
  * @property \DateTime|null $dateUpdated
  * @property string|null $description
- * @property string|null $status
- * @property string|null $documentationUrl
  * @property string|null $url
  * @property array|null $links
  */
@@ -44,7 +42,7 @@ class EventTypeInstance extends InstanceResource
      * @param mixed[] $payload The response payload
      * @param string $type A string that uniquely identifies this Event Type.
      */
-    public function __construct(Version $version, array $payload, ?string $type = null)
+    public function __construct(Version $version, array $payload, string $type = null)
     {
         parent::__construct($version);
 
@@ -55,8 +53,6 @@ class EventTypeInstance extends InstanceResource
             'dateCreated' => Deserialize::dateTime(Values::array_get($payload, 'date_created')),
             'dateUpdated' => Deserialize::dateTime(Values::array_get($payload, 'date_updated')),
             'description' => Values::array_get($payload, 'description'),
-            'status' => Values::array_get($payload, 'status'),
-            'documentationUrl' => Values::array_get($payload, 'documentation_url'),
             'url' => Values::array_get($payload, 'url'),
             'links' => Values::array_get($payload, 'links'),
         ];

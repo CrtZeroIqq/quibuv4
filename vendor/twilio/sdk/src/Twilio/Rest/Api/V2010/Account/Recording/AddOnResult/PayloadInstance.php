@@ -22,7 +22,6 @@ use Twilio\InstanceResource;
 use Twilio\Values;
 use Twilio\Version;
 use Twilio\Deserialize;
-use Twilio\Rest\Api\V2010\Account\Recording\AddOnResult\Payload\DataList;
 
 
 /**
@@ -40,8 +39,6 @@ use Twilio\Rest\Api\V2010\Account\Recording\AddOnResult\Payload\DataList;
  */
 class PayloadInstance extends InstanceResource
 {
-    protected $_data;
-
     /**
      * Initialize the PayloadInstance
      *
@@ -52,7 +49,7 @@ class PayloadInstance extends InstanceResource
      * @param string $addOnResultSid The SID of the AddOnResult to which the payloads to delete belongs.
      * @param string $sid The Twilio-provided string that uniquely identifies the Recording AddOnResult Payload resource to delete.
      */
-    public function __construct(Version $version, array $payload, string $accountSid, string $referenceSid, string $addOnResultSid, ?string $sid = null)
+    public function __construct(Version $version, array $payload, string $accountSid, string $referenceSid, string $addOnResultSid, string $sid = null)
     {
         parent::__construct($version);
 
@@ -117,14 +114,6 @@ class PayloadInstance extends InstanceResource
     {
 
         return $this->proxy()->fetch();
-    }
-
-    /**
-     * Access the data
-     */
-    protected function getData(): DataList
-    {
-        return $this->proxy()->data;
     }
 
     /**

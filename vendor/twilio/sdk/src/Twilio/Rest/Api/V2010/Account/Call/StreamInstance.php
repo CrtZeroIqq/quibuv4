@@ -43,9 +43,9 @@ class StreamInstance extends InstanceResource
      * @param mixed[] $payload The response payload
      * @param string $accountSid The SID of the [Account](https://www.twilio.com/docs/iam/api/account) that created this Stream resource.
      * @param string $callSid The SID of the [Call](https://www.twilio.com/docs/voice/api/call-resource) the Stream resource is associated with.
-     * @param string $sid The SID or the `name` of the Stream resource to be stopped
+     * @param string $sid The SID of the Stream resource, or the `name` used when creating the resource
      */
-    public function __construct(Version $version, array $payload, string $accountSid, string $callSid, ?string $sid = null)
+    public function __construct(Version $version, array $payload, string $accountSid, string $callSid, string $sid = null)
     {
         parent::__construct($version);
 

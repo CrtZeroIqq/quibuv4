@@ -27,24 +27,24 @@ use Twilio\Deserialize;
 
 /**
  * @property string|null $accountSid
- * @property int $avgTaskAcceptanceTime
+ * @property int|null $avgTaskAcceptanceTime
  * @property \DateTime|null $startTime
  * @property \DateTime|null $endTime
- * @property int $reservationsCreated
- * @property int $reservationsAccepted
- * @property int $reservationsRejected
- * @property int $reservationsTimedOut
- * @property int $reservationsCanceled
- * @property int $reservationsRescinded
+ * @property int|null $reservationsCreated
+ * @property int|null $reservationsAccepted
+ * @property int|null $reservationsRejected
+ * @property int|null $reservationsTimedOut
+ * @property int|null $reservationsCanceled
+ * @property int|null $reservationsRescinded
  * @property array|null $splitByWaitTime
  * @property array|null $waitDurationUntilAccepted
  * @property array|null $waitDurationUntilCanceled
- * @property int $tasksCanceled
- * @property int $tasksCompleted
- * @property int $tasksEntered
- * @property int $tasksDeleted
- * @property int $tasksMoved
- * @property int $tasksTimedOutInWorkflow
+ * @property int|null $tasksCanceled
+ * @property int|null $tasksCompleted
+ * @property int|null $tasksEntered
+ * @property int|null $tasksDeleted
+ * @property int|null $tasksMoved
+ * @property int|null $tasksTimedOutInWorkflow
  * @property string|null $workflowSid
  * @property string|null $workspaceSid
  * @property string|null $url

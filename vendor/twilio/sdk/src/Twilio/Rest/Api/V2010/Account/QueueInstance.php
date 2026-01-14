@@ -28,14 +28,14 @@ use Twilio\Rest\Api\V2010\Account\Queue\MemberList;
 
 /**
  * @property \DateTime|null $dateUpdated
- * @property int $currentSize
+ * @property int|null $currentSize
  * @property string|null $friendlyName
  * @property string|null $uri
  * @property string|null $accountSid
- * @property int $averageWaitTime
+ * @property int|null $averageWaitTime
  * @property string|null $sid
  * @property \DateTime|null $dateCreated
- * @property int $maxSize
+ * @property int|null $maxSize
  */
 class QueueInstance extends InstanceResource
 {
@@ -49,7 +49,7 @@ class QueueInstance extends InstanceResource
      * @param string $accountSid The SID of the [Account](https://www.twilio.com/docs/iam/api/account) that will create the resource.
      * @param string $sid The Twilio-provided string that uniquely identifies the Queue resource to delete
      */
-    public function __construct(Version $version, array $payload, string $accountSid, ?string $sid = null)
+    public function __construct(Version $version, array $payload, string $accountSid, string $sid = null)
     {
         parent::__construct($version);
 

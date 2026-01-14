@@ -32,7 +32,7 @@ use Twilio\Version;
  * @property array|null $category
  * @property string|null $answerSetId
  * @property bool|null $allowNa
- * @property int $usage
+ * @property int|null $usage
  * @property array|null $answerSet
  * @property string|null $url
  */
@@ -45,7 +45,7 @@ class InsightsQuestionnairesQuestionInstance extends InstanceResource
      * @param mixed[] $payload The response payload
      * @param string $questionSid The SID of the question
      */
-    public function __construct(Version $version, array $payload, ?string $questionSid = null)
+    public function __construct(Version $version, array $payload, string $questionSid = null)
     {
         parent::__construct($version);
 

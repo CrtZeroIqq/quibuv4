@@ -38,9 +38,9 @@ use Twilio\Deserialize;
  * @property string|null $resolution
  * @property bool|null $trim
  * @property string $format
- * @property int $bitrate
+ * @property int|null $bitrate
  * @property int|null $size
- * @property int $duration
+ * @property int|null $duration
  * @property string|null $mediaExternalLocation
  * @property string|null $statusCallback
  * @property string|null $statusCallbackMethod
@@ -56,7 +56,7 @@ class CompositionInstance extends InstanceResource
      * @param mixed[] $payload The response payload
      * @param string $sid The SID of the Composition resource to delete.
      */
-    public function __construct(Version $version, array $payload, ?string $sid = null)
+    public function __construct(Version $version, array $payload, string $sid = null)
     {
         parent::__construct($version);
 

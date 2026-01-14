@@ -72,8 +72,7 @@ class RecordingSettingsContext extends InstanceContext
                 Serialize::booleanToString($options['encryptionEnabled']),
         ]);
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->create('POST', $this->uri, [], $data, $headers);
+        $payload = $this->version->create('POST', $this->uri, [], $data);
 
         return new RecordingSettingsInstance(
             $this->version,
@@ -91,8 +90,7 @@ class RecordingSettingsContext extends InstanceContext
     public function fetch(): RecordingSettingsInstance
     {
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->fetch('GET', $this->uri, [], [], $headers);
+        $payload = $this->version->fetch('GET', $this->uri, [], []);
 
         return new RecordingSettingsInstance(
             $this->version,

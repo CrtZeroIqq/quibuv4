@@ -21,7 +21,6 @@ use Twilio\InstanceContext;
 use Twilio\Rest\Conversations\V1\AddressConfigurationList;
 use Twilio\Rest\Conversations\V1\ConfigurationList;
 use Twilio\Rest\Conversations\V1\ConversationList;
-use Twilio\Rest\Conversations\V1\ConversationWithParticipantsList;
 use Twilio\Rest\Conversations\V1\CredentialList;
 use Twilio\Rest\Conversations\V1\ParticipantConversationList;
 use Twilio\Rest\Conversations\V1\RoleList;
@@ -33,7 +32,6 @@ use Twilio\Version;
  * @property AddressConfigurationList $addressConfigurations
  * @property ConfigurationList $configuration
  * @property ConversationList $conversations
- * @property ConversationWithParticipantsList $conversationWithParticipants
  * @property CredentialList $credentials
  * @property ParticipantConversationList $participantConversations
  * @property RoleList $roles
@@ -51,7 +49,6 @@ class V1 extends Version
     protected $_addressConfigurations;
     protected $_configuration;
     protected $_conversations;
-    protected $_conversationWithParticipants;
     protected $_credentials;
     protected $_participantConversations;
     protected $_roles;
@@ -91,14 +88,6 @@ class V1 extends Version
             $this->_conversations = new ConversationList($this);
         }
         return $this->_conversations;
-    }
-
-    protected function getConversationWithParticipants(): ConversationWithParticipantsList
-    {
-        if (!$this->_conversationWithParticipants) {
-            $this->_conversationWithParticipants = new ConversationWithParticipantsList($this);
-        }
-        return $this->_conversationWithParticipants;
     }
 
     protected function getCredentials(): CredentialList

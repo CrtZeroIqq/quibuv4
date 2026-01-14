@@ -18,7 +18,6 @@ namespace Twilio\Rest\Events\V1\Sink;
 
 use Twilio\Exceptions\TwilioException;
 use Twilio\ListResource;
-use Twilio\Values;
 use Twilio\Version;
 
 
@@ -56,8 +55,7 @@ class SinkTestList extends ListResource
     public function create(): SinkTestInstance
     {
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->create('POST', $this->uri, [], [], $headers);
+        $payload = $this->version->create('POST', $this->uri, [], []);
 
         return new SinkTestInstance(
             $this->version,

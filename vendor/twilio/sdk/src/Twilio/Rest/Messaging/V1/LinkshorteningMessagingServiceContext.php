@@ -18,7 +18,6 @@
 namespace Twilio\Rest\Messaging\V1;
 
 use Twilio\Exceptions\TwilioException;
-use Twilio\Values;
 use Twilio\Version;
 use Twilio\InstanceContext;
 
@@ -61,8 +60,7 @@ class LinkshorteningMessagingServiceContext extends InstanceContext
     public function create(): LinkshorteningMessagingServiceInstance
     {
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->create('POST', $this->uri, [], [], $headers);
+        $payload = $this->version->create('POST', $this->uri, [], []);
 
         return new LinkshorteningMessagingServiceInstance(
             $this->version,
@@ -82,8 +80,7 @@ class LinkshorteningMessagingServiceContext extends InstanceContext
     public function delete(): bool
     {
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded' ]);
-        return $this->version->delete('DELETE', $this->uri, [], [], $headers);
+        return $this->version->delete('DELETE', $this->uri);
     }
 
 

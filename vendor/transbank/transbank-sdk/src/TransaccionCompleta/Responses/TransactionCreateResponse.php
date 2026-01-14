@@ -10,7 +10,8 @@ class TransactionCreateResponse
 
     public function __construct($json)
     {
-        $this->token = Utils::returnValueIfExists($json, 'token');
+        $token = Utils::returnValueIfExists($json, 'token');
+        $this->setToken($token);
     }
 
     /**

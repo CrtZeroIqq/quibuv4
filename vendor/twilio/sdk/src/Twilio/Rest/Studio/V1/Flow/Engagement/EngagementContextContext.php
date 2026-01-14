@@ -18,7 +18,6 @@
 namespace Twilio\Rest\Studio\V1\Flow\Engagement;
 
 use Twilio\Exceptions\TwilioException;
-use Twilio\Values;
 use Twilio\Version;
 use Twilio\InstanceContext;
 
@@ -61,8 +60,7 @@ class EngagementContextContext extends InstanceContext
     public function fetch(): EngagementContextInstance
     {
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->fetch('GET', $this->uri, [], [], $headers);
+        $payload = $this->version->fetch('GET', $this->uri, [], []);
 
         return new EngagementContextInstance(
             $this->version,

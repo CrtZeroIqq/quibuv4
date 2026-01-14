@@ -31,8 +31,8 @@ use Twilio\Deserialize;
  * @property string|null $sid
  * @property string|null $friendlyName
  * @property string|null $target
- * @property int $priority
- * @property int $weight
+ * @property int|null $priority
+ * @property int|null $weight
  * @property bool|null $enabled
  * @property \DateTime|null $dateCreated
  * @property \DateTime|null $dateUpdated
@@ -48,7 +48,7 @@ class ConnectionPolicyTargetInstance extends InstanceResource
      * @param string $connectionPolicySid The SID of the Connection Policy that owns the Target.
      * @param string $sid The unique string that we created to identify the Target resource to delete.
      */
-    public function __construct(Version $version, array $payload, string $connectionPolicySid, ?string $sid = null)
+    public function __construct(Version $version, array $payload, string $connectionPolicySid, string $sid = null)
     {
         parent::__construct($version);
 

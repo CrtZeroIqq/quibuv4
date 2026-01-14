@@ -79,8 +79,7 @@ class TaskQueueStatisticsContext extends InstanceContext
                 $options['splitByWaitTime'],
         ]);
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->fetch('GET', $this->uri, $params, [], $headers);
+        $payload = $this->version->fetch('GET', $this->uri, $params, []);
 
         return new TaskQueueStatisticsInstance(
             $this->version,

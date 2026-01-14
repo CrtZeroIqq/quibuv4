@@ -33,7 +33,7 @@ use Twilio\Deserialize;
  * @property \DateTime|null $dateUpdated
  * @property string|null $url
  * @property bool|null $dataEnabled
- * @property int $dataLimit
+ * @property int|null $dataLimit
  * @property string $dataMetering
  * @property bool|null $smsCommandsEnabled
  * @property string|null $smsCommandsUrl
@@ -51,7 +51,7 @@ class FleetInstance extends InstanceResource
      * @param mixed[] $payload The response payload
      * @param string $sid The SID of the Fleet resource to fetch.
      */
-    public function __construct(Version $version, array $payload, ?string $sid = null)
+    public function __construct(Version $version, array $payload, string $sid = null)
     {
         parent::__construct($version);
 

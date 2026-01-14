@@ -71,12 +71,9 @@ class VerificationCheckList extends ListResource
                 $options['amount'],
             'Payee' =>
                 $options['payee'],
-            'SnaClientToken' =>
-                $options['snaClientToken'],
         ]);
 
-        $headers = Values::of(['Content-Type' => 'application/x-www-form-urlencoded', 'Accept' => 'application/json' ]);
-        $payload = $this->version->create('POST', $this->uri, [], $data, $headers);
+        $payload = $this->version->create('POST', $this->uri, [], $data);
 
         return new VerificationCheckInstance(
             $this->version,

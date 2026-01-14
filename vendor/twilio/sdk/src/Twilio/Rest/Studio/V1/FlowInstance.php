@@ -31,7 +31,7 @@ use Twilio\Rest\Studio\V1\Flow\ExecutionList;
  * @property string|null $accountSid
  * @property string|null $friendlyName
  * @property string $status
- * @property int $version
+ * @property int|null $version
  * @property \DateTime|null $dateCreated
  * @property \DateTime|null $dateUpdated
  * @property string|null $url
@@ -49,7 +49,7 @@ class FlowInstance extends InstanceResource
      * @param mixed[] $payload The response payload
      * @param string $sid The SID of the Flow resource to delete.
      */
-    public function __construct(Version $version, array $payload, ?string $sid = null)
+    public function __construct(Version $version, array $payload, string $sid = null)
     {
         parent::__construct($version);
 

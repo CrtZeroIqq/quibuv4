@@ -21,7 +21,7 @@ use Twilio\Values;
 abstract class PhoneNumberOptions
 {
     /**
-     * @param string $fields A comma-separated list of fields to return. Possible values are validation, caller_name, sim_swap, call_forwarding, line_status, line_type_intelligence, identity_match, reassigned_number, sms_pumping_risk, phone_number_quality_score, pre_fill.
+     * @param string $fields A comma-separated list of fields to return. Possible values are validation, caller_name, sim_swap, call_forwarding, line_status, line_type_intelligence, identity_match, reassigned_number, sms_pumping_risk, phone_number_quality_score.
      * @param string $countryCode The [country code](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) used if the phone number provided is in national format.
      * @param string $firstName User’s first name. This query parameter is only used (optionally) for identity_match package requests.
      * @param string $lastName User’s last name. This query parameter is only used (optionally) for identity_match package requests.
@@ -34,8 +34,6 @@ abstract class PhoneNumberOptions
      * @param string $nationalId User’s national ID, such as SSN or Passport ID. This query parameter is only used (optionally) for identity_match package requests.
      * @param string $dateOfBirth User’s date of birth, in YYYYMMDD format. This query parameter is only used (optionally) for identity_match package requests.
      * @param string $lastVerifiedDate The date you obtained consent to call or text the end-user of the phone number or a date on which you are reasonably certain that the end-user could still be reached at that number. This query parameter is only used (optionally) for reassigned_number package requests.
-     * @param string $verificationSid The unique identifier associated with a verification process through verify API. This query parameter is only used (optionally) for pre_fill package requests.
-     * @param string $partnerSubId The optional partnerSubId parameter to provide context for your sub-accounts, tenantIDs, sender IDs or other segmentation, enhancing the accuracy of the risk analysis.
      * @return FetchPhoneNumberOptions Options builder
      */
     public static function fetch(
@@ -52,9 +50,7 @@ abstract class PhoneNumberOptions
         string $addressCountryCode = Values::NONE,
         string $nationalId = Values::NONE,
         string $dateOfBirth = Values::NONE,
-        string $lastVerifiedDate = Values::NONE,
-        string $verificationSid = Values::NONE,
-        string $partnerSubId = Values::NONE
+        string $lastVerifiedDate = Values::NONE
 
     ): FetchPhoneNumberOptions
     {
@@ -71,9 +67,7 @@ abstract class PhoneNumberOptions
             $addressCountryCode,
             $nationalId,
             $dateOfBirth,
-            $lastVerifiedDate,
-            $verificationSid,
-            $partnerSubId
+            $lastVerifiedDate
         );
     }
 
@@ -82,7 +76,7 @@ abstract class PhoneNumberOptions
 class FetchPhoneNumberOptions extends Options
     {
     /**
-     * @param string $fields A comma-separated list of fields to return. Possible values are validation, caller_name, sim_swap, call_forwarding, line_status, line_type_intelligence, identity_match, reassigned_number, sms_pumping_risk, phone_number_quality_score, pre_fill.
+     * @param string $fields A comma-separated list of fields to return. Possible values are validation, caller_name, sim_swap, call_forwarding, line_status, line_type_intelligence, identity_match, reassigned_number, sms_pumping_risk, phone_number_quality_score.
      * @param string $countryCode The [country code](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) used if the phone number provided is in national format.
      * @param string $firstName User’s first name. This query parameter is only used (optionally) for identity_match package requests.
      * @param string $lastName User’s last name. This query parameter is only used (optionally) for identity_match package requests.
@@ -95,8 +89,6 @@ class FetchPhoneNumberOptions extends Options
      * @param string $nationalId User’s national ID, such as SSN or Passport ID. This query parameter is only used (optionally) for identity_match package requests.
      * @param string $dateOfBirth User’s date of birth, in YYYYMMDD format. This query parameter is only used (optionally) for identity_match package requests.
      * @param string $lastVerifiedDate The date you obtained consent to call or text the end-user of the phone number or a date on which you are reasonably certain that the end-user could still be reached at that number. This query parameter is only used (optionally) for reassigned_number package requests.
-     * @param string $verificationSid The unique identifier associated with a verification process through verify API. This query parameter is only used (optionally) for pre_fill package requests.
-     * @param string $partnerSubId The optional partnerSubId parameter to provide context for your sub-accounts, tenantIDs, sender IDs or other segmentation, enhancing the accuracy of the risk analysis.
      */
     public function __construct(
         
@@ -112,9 +104,7 @@ class FetchPhoneNumberOptions extends Options
         string $addressCountryCode = Values::NONE,
         string $nationalId = Values::NONE,
         string $dateOfBirth = Values::NONE,
-        string $lastVerifiedDate = Values::NONE,
-        string $verificationSid = Values::NONE,
-        string $partnerSubId = Values::NONE
+        string $lastVerifiedDate = Values::NONE
 
     ) {
         $this->options['fields'] = $fields;
@@ -130,14 +120,12 @@ class FetchPhoneNumberOptions extends Options
         $this->options['nationalId'] = $nationalId;
         $this->options['dateOfBirth'] = $dateOfBirth;
         $this->options['lastVerifiedDate'] = $lastVerifiedDate;
-        $this->options['verificationSid'] = $verificationSid;
-        $this->options['partnerSubId'] = $partnerSubId;
     }
 
     /**
-     * A comma-separated list of fields to return. Possible values are validation, caller_name, sim_swap, call_forwarding, line_status, line_type_intelligence, identity_match, reassigned_number, sms_pumping_risk, phone_number_quality_score, pre_fill.
+     * A comma-separated list of fields to return. Possible values are validation, caller_name, sim_swap, call_forwarding, line_status, line_type_intelligence, identity_match, reassigned_number, sms_pumping_risk, phone_number_quality_score.
      *
-     * @param string $fields A comma-separated list of fields to return. Possible values are validation, caller_name, sim_swap, call_forwarding, line_status, line_type_intelligence, identity_match, reassigned_number, sms_pumping_risk, phone_number_quality_score, pre_fill.
+     * @param string $fields A comma-separated list of fields to return. Possible values are validation, caller_name, sim_swap, call_forwarding, line_status, line_type_intelligence, identity_match, reassigned_number, sms_pumping_risk, phone_number_quality_score.
      * @return $this Fluent Builder
      */
     public function setFields(string $fields): self
@@ -287,30 +275,6 @@ class FetchPhoneNumberOptions extends Options
     public function setLastVerifiedDate(string $lastVerifiedDate): self
     {
         $this->options['lastVerifiedDate'] = $lastVerifiedDate;
-        return $this;
-    }
-
-    /**
-     * The unique identifier associated with a verification process through verify API. This query parameter is only used (optionally) for pre_fill package requests.
-     *
-     * @param string $verificationSid The unique identifier associated with a verification process through verify API. This query parameter is only used (optionally) for pre_fill package requests.
-     * @return $this Fluent Builder
-     */
-    public function setVerificationSid(string $verificationSid): self
-    {
-        $this->options['verificationSid'] = $verificationSid;
-        return $this;
-    }
-
-    /**
-     * The optional partnerSubId parameter to provide context for your sub-accounts, tenantIDs, sender IDs or other segmentation, enhancing the accuracy of the risk analysis.
-     *
-     * @param string $partnerSubId The optional partnerSubId parameter to provide context for your sub-accounts, tenantIDs, sender IDs or other segmentation, enhancing the accuracy of the risk analysis.
-     * @return $this Fluent Builder
-     */
-    public function setPartnerSubId(string $partnerSubId): self
-    {
-        $this->options['partnerSubId'] = $partnerSubId;
         return $this;
     }
 
