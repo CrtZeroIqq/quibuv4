@@ -1,0 +1,228 @@
+/* 
+ * Dashboard de Progreso del Grupo - Estilo Verde Quibu
+ * Archivo: stats-dashboard.css
+ * Agregar a /pagar/assets/css/
+ */
+
+.grupo-stats-card {
+    background: #ffffff !important;
+    border: 2px solid #4CAF50 !important;
+    border-radius: 12px !important;
+    padding: 20px !important;
+    margin: 24px 0 !important;
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.15) !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.stats-header {
+    text-align: center !important;
+    margin-bottom: 16px !important;
+    padding-bottom: 12px !important;
+    border-bottom: 2px solid #4CAF50 !important;
+}
+
+.stats-title {
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    margin: 0 0 6px 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 10px !important;
+    color: #2E7D32 !important;
+}
+
+.stats-icon {
+    font-size: 28px !important;
+    display: none !important; /* Ocultar emoji que no carga */
+}
+
+.stats-subtitle {
+    font-size: 16px !important;
+    margin: 0 !important;
+    font-weight: 600 !important;
+    color: #4CAF50 !important;
+}
+
+.stats-body {
+    background: #F1F8F4 !important;
+    border-radius: 8px !important;
+    padding: 16px !important;
+    color: #333 !important;
+}
+
+.stats-loading {
+    text-align: center !important;
+    padding: 32px 0 !important;
+    color: #666 !important;
+}
+
+.spinner {
+    border: 4px solid #E8F5E9 !important;
+    border-top: 4px solid #4CAF50 !important;
+    border-radius: 50% !important;
+    width: 40px !important;
+    height: 40px !important;
+    animation: spin 1s linear infinite !important;
+    margin: 0 auto 16px !important;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.cuota-actual {
+    text-align: center !important;
+    padding: 12px !important;
+    background: #ffffff !important;
+    border: 1px solid #4CAF50 !important;
+    border-radius: 8px !important;
+    margin-bottom: 12px !important;
+}
+
+.cuota-actual h3 {
+    margin: 0 0 4px 0 !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    color: #666 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+}
+
+.cuota-mes {
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    margin: 0 !important;
+    color: #2E7D32 !important;
+}
+
+.progress-section {
+    margin: 12px 0 !important;
+}
+
+.progress-label {
+    display: flex !important;
+    justify-content: space-between !important;
+    margin-bottom: 8px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    color: #333 !important;
+}
+
+.progress-bar-container {
+    background: #E8F5E9 !important;
+    border-radius: 20px !important;
+    height: 28px !important;
+    overflow: hidden !important;
+    position: relative !important;
+    border: 1px solid #C8E6C9 !important;
+}
+
+.progress-bar-fill {
+    background: linear-gradient(90deg, #4CAF50 0%, #66BB6A 100%) !important;
+    height: 100% !important;
+    border-radius: 20px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-weight: 700 !important;
+    font-size: 13px !important;
+    transition: width 1s ease-out !important;
+    color: #ffffff !important;
+}
+
+.stats-metrics {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 8px !important;
+    margin-top: 16px !important;
+}
+
+.metric-card {
+    background: #ffffff !important;
+    border: 1px solid #C8E6C9 !important;
+    border-radius: 8px !important;
+    padding: 12px 8px !important;
+    text-align: center !important;
+    transition: transform 0.2s, box-shadow 0.2s !important;
+}
+
+.metric-card:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 8px rgba(76, 175, 80, 0.2) !important;
+}
+
+.metric-value {
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    margin: 0 0 2px 0 !important;
+    display: block !important;
+    color: #2E7D32 !important;
+}
+
+.metric-label {
+    font-size: 10px !important;
+    margin: 0 !important;
+    color: #666 !important;
+    line-height: 1.2 !important;
+}
+
+.stats-footer {
+    margin-top: 16px !important;
+    padding-top: 12px !important;
+    border-top: 1px solid #C8E6C9 !important;
+    text-align: center !important;
+    font-size: 12px !important;
+    color: #666 !important;
+}
+
+.stats-error {
+    text-align: center !important;
+    padding: 24px !important;
+    color: #D32F2F !important;
+    background: #FFEBEE !important;
+    border-radius: 8px !important;
+}
+
+@media (max-width: 640px) {
+    .grupo-stats-card {
+        padding: 16px !important;
+        margin: 16px 0 !important;
+    }
+    
+    .stats-title {
+        font-size: 18px !important;
+        gap: 8px !important;
+    }
+    
+    .stats-subtitle {
+        font-size: 14px !important;
+    }
+    
+    .stats-metrics {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+    }
+    
+    .metric-value {
+        font-size: 18px !important;
+    }
+    
+    .metric-label {
+        font-size: 9px !important;
+    }
+    
+    .cuota-actual h3 {
+        font-size: 12px !important;
+    }
+    
+    .cuota-mes {
+        font-size: 16px !important;
+    }
+    
+    .progress-label {
+        font-size: 12px !important;
+    }
+}
