@@ -2,17 +2,51 @@
 
 ## Descripción General
 
-Esta integración permite a los tesoreros conectar sus cuentas de Mercado Pago para recibir pagos directamente, sin intermediarios. Los pagos llegan automáticamente a la cuenta vinculada del tesorero, y Quibu retiene únicamente su comisión configurada.
+Esta integración utiliza el **modelo de Marketplace (Split Payments)** de Mercado Pago, que permite dividir automáticamente cada pago:
+
+### 💰 Flujo de Dinero (Split Payment)
+
+```
+Usuario paga: $10,000 (cuota) + $300 (fee) = $10,300 total
+                           ↓
+        ┌─────────────────┴─────────────────┐
+        ↓                                   ↓
+ Tesorero recibe: $10,000          Quibu recibe: $300
+ (cuenta MP vinculada)             (marketplace_fee)
+```
+
+**Características clave:**
+- ✅ **Pagos directos al tesorero**: El monto de las cuotas llega directamente a la cuenta de Mercado Pago del tesorero
+- ✅ **Comisión automática para Quibu**: El fee se retiene automáticamente y va a la cuenta de Mercado Pago de Quibu
+- ✅ **Sin intermediarios**: Mercado Pago maneja el split de forma nativa usando `marketplace_fee`
+- ✅ **Transparente para el usuario**: El usuario ve el desglose completo (cuota + servicio)
 
 ---
 
 ## 📋 Requisitos Previos
 
-### 1. Cuenta de Mercado Pago
-- Crear una cuenta en [Mercado Pago Chile](https://www.mercadopago.cl)
-- Verificar la cuenta (KYC completo)
+### 1. Cuenta de Mercado Pago para Quibu (Obligatorio)
 
-### 2. Aplicación en el Panel de Desarrolladores
+**IMPORTANTE:** La empresa Quibu debe tener su propia cuenta de Mercado Pago para recibir los fees.
+
+1. Crear cuenta empresarial en [Mercado Pago Chile](https://www.mercadopago.cl)
+2. Completar verificación KYC (Know Your Customer)
+3. Obtener credenciales de producción:
+   - Ir a [Panel de Credenciales](https://www.mercadopago.cl/developers/panel/credentials)
+   - Copiar **Access Token** de producción
+   - Copiar **Public Key** de producción
+4. Estos tokens se configurarán en `.env` como:
+   - `QUIBU_MP_ACCESS_TOKEN`
+   - `QUIBU_MP_PUBLIC_KEY`
+
+### 2. Cuentas de Mercado Pago para Tesoreros
+
+Cada tesorero debe:
+- Crear su propia cuenta en [Mercado Pago Chile](https://www.mercadopago.cl)
+- Verificar la cuenta (KYC completo)
+- Vincularla a través del dashboard de Quibu usando OAuth 2.0
+
+### 3. Aplicación en el Panel de Desarrolladores
 1. Ir a [Panel de Desarrolladores](https://www.mercadopago.cl/developers/panel/app)
 2. Crear una nueva aplicación
 3. Configurar:
@@ -58,7 +92,7 @@ nano .env
 Configurar las siguientes variables:
 
 ```env
-# Mercado Pago
+# Mercado Pago - OAuth (Aplicación)
 MP_CLIENT_ID=TU_CLIENT_ID_AQUI
 MP_CLIENT_SECRET=TU_CLIENT_SECRET_AQUI
 MP_REDIRECT_URI=https://www.quibu.cl/api/mp-callback.php
@@ -70,6 +104,11 @@ MP_SUCCESS_URL=https://www.quibu.cl/pago-exitoso.php
 MP_FAILURE_URL=https://www.quibu.cl/pago-fallido.php
 MP_PENDING_URL=https://www.quibu.cl/pago-pendiente.php
 
+# Mercado Pago - Cuenta de Quibu (Marketplace/Collector)
+# CRÍTICO: Estas son las credenciales de la cuenta de MP de Quibu que recibirá los fees
+QUIBU_MP_ACCESS_TOKEN=TU_ACCESS_TOKEN_QUIBU
+QUIBU_MP_PUBLIC_KEY=TU_PUBLIC_KEY_QUIBU
+
 # Base de datos
 DB_HOST=localhost
 DB_NAME=quibu_db
@@ -77,6 +116,7 @@ DB_USER=tu_usuario
 DB_PASS=tu_contraseña
 
 # Comisión de Quibu (opcional, 0 por defecto)
+# NOTA: Esto es solo referencial, las fees se calculan con tabla progresiva
 QUIBU_COMMISSION_PERCENT=0
 ```
 
@@ -163,36 +203,51 @@ location ~ \.php$ {
 
 ---
 
-## 💳 Flujo de Pago
+## 💳 Flujo de Pago con Split Payment
 
-### Proceso de Pago Completo
+### Proceso de Pago Completo (Marketplace Model)
 
 ```
 1. Usuario selecciona cuotas a pagar
    ↓
 2. Usuario elige "Mercado Pago" como método
    ↓
-3. Sistema calcula total + fees de Quibu
+3. Sistema calcula:
+   - Subtotal (cuotas): $10,000
+   - Fee Quibu: $300
+   - Total a pagar: $10,300
    ↓
 4. Sistema crea Preferencia de Pago con SDK
-   - Usa access_token del tesorero
-   - Incluye items (cuotas + fee)
+   - Usa access_token del TESORERO (destinatario principal)
+   - Incluye items: cuotas ($10,000) + servicio ($300)
+   - Configura marketplace_fee: $300 (va a Quibu)
    - Configura URLs de retorno
    ↓
 5. Usuario es redireccionado a Mercado Pago
    ↓
-6. Usuario completa el pago en MP
+6. Usuario completa el pago en MP ($10,300 total)
    ↓
-7. MP redirecciona a /api/respuesta-pago.php
+7. ✨ SPLIT AUTOMÁTICO por Mercado Pago:
+   - Tesorero recibe: $10,000 (en su cuenta MP)
+   - Quibu recibe: $300 (marketplace_fee a cuenta de Quibu)
    ↓
-8. Sistema confirma el pago con MP API
+8. MP redirecciona a /api/respuesta-pago.php
    ↓
-9. Sistema registra pago en BD
+9. Sistema confirma el pago con MP API
    ↓
-10. MP envía notificación a webhook (async)
+10. Sistema registra pago en BD
    ↓
-11. ✅ Pago confirmado
+11. MP envía notificación a webhook (async)
+   ↓
+12. ✅ Pago confirmado y distribuido
 ```
+
+### 🔑 Claves del Split Payment
+
+1. **Access Token del Tesorero**: La preferencia se crea con el token OAuth del tesorero, por lo que él es el "seller" principal
+2. **marketplace_fee**: Propiedad especial de Mercado Pago que automáticamente retiene el fee para la aplicación (Quibu)
+3. **Transparente**: El usuario ve el desglose completo, pero el split es automático
+4. **Sin movimientos manuales**: No hay transferencias manuales ni recolección posterior
 
 ### Archivos Involucrados
 

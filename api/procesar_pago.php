@@ -153,16 +153,22 @@ try {
 }
 
 /**
- * Procesar pago con Mercado Pago
+ * Procesar pago con Mercado Pago usando modelo de Marketplace
+ *
+ * Split Payment:
+ * - El TESORERO recibe el monto de las cuotas (subtotal)
+ * - QUIBU recibe el fee como marketplace_fee
+ * - El usuario paga el total (subtotal + fee)
  */
 function procesar_mercadopago($grupo, $pagador, $detalles_cuotas, $subtotal, $fee_total, $total) {
     // Configurar SDK con el access token del tesorero
+    // El pago irá a la cuenta del tesorero, y Quibu recibirá el marketplace_fee
     SDK::setAccessToken($grupo['mp_access_token']);
 
     // Crear preferencia de pago
     $preference = new Preference();
 
-    // Items
+    // Items - SOLO las cuotas (sin el fee)
     $items = [];
 
     // Agregar cuotas como items
@@ -176,7 +182,8 @@ function procesar_mercadopago($grupo, $pagador, $detalles_cuotas, $subtotal, $fe
         $items[] = $item;
     }
 
-    // Agregar fee de Quibu como item
+    // Agregar el FEE de Quibu también como item para que el usuario lo vea
+    // Pero será cobrado como marketplace_fee a nivel de preferencia
     if ($fee_total > 0) {
         $item_fee = new Item();
         $item_fee->title = "Servicio Quibu";
@@ -188,6 +195,15 @@ function procesar_mercadopago($grupo, $pagador, $detalles_cuotas, $subtotal, $fe
     }
 
     $preference->items = $items;
+
+    // ============================================
+    // MARKETPLACE FEE (SPLIT PAYMENT)
+    // ============================================
+    // Esto hace que Quibu reciba el fee automáticamente
+    // y el tesorero reciba solo el monto de las cuotas
+    if ($fee_total > 0) {
+        $preference->marketplace_fee = $fee_total;
+    }
 
     // Información del pagador
     $preference->payer = [

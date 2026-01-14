@@ -30,6 +30,15 @@ define('MP_CLIENT_ID', $_ENV['MP_CLIENT_ID'] ?? '');
 define('MP_CLIENT_SECRET', $_ENV['MP_CLIENT_SECRET'] ?? '');
 
 /**
+ * CREDENCIALES DE QUIBU (MARKETPLACE/COLLECTOR)
+ *
+ * Access token de la cuenta de Mercado Pago de Quibu
+ * Esta cuenta recibirá los fees (comisiones) de cada transacción
+ */
+define('QUIBU_MP_ACCESS_TOKEN', $_ENV['QUIBU_MP_ACCESS_TOKEN'] ?? '');
+define('QUIBU_MP_PUBLIC_KEY', $_ENV['QUIBU_MP_PUBLIC_KEY'] ?? '');
+
+/**
  * URLs OAUTH 2.0
  */
 define('MP_AUTH_URL', 'https://auth.mercadopago.cl');
