@@ -1,8 +1,14 @@
-# 🔄 Instalación Limpia de Quibu V4 con Base de Datos Existente
+# 🔄 Instalación Limpia de Quibu V4 en Raíz HTML con Base de Datos Existente
 
 ## 📋 Resumen
 
-Esta guía te permite instalar **Quibu V4 de forma limpia** manteniendo tu **base de datos existente** con todos los datos de versiones anteriores (quibuv2, quibuv3).
+Esta guía te permite instalar **Quibu V4 directamente en la raíz HTML** (`/var/www/html`) manteniendo tu **base de datos existente** con todos los datos de versiones anteriores (quibuv2, quibuv3).
+
+**✨ Características de esta instalación:**
+- 📁 Instala Quibu V4 directamente en `/var/www/html` (no en subdirectorio)
+- 🔄 Maneja WordPress existente (opción de mover a subdirectorio)
+- 🗄️ Conserva 100% de tus datos en la base de datos
+- 🔒 Crea backup completo antes de cualquier cambio
 
 ### ✅ Lo que se CONSERVA:
 - ✅ Toda tu base de datos actual
@@ -17,6 +23,24 @@ Esta guía te permite instalar **Quibu V4 de forma limpia** manteniendo tu **bas
 - 🔄 Frontend (HTML/CSS/JS)
 - 🔄 APIs
 - 🔄 Dependencias (vendor/)
+
+### ⚠️ IMPORTANTE: WordPress y Archivos Existentes
+
+Si tienes **WordPress** instalado en la raíz HTML, el script te dará opciones:
+
+1. **Opción 1 (Recomendada):** Mover WordPress a `/var/www/html/wordpress/`
+   - WordPress seguirá funcionando en `https://www.quibu.cl/wordpress`
+   - Quibu V4 funcionará en la raíz `https://www.quibu.cl`
+
+2. **Opción 2:** Mezclar WordPress con Quibu V4 en la misma raíz
+   - ⚠️ No recomendado: puede haber conflictos de archivos
+
+3. **Opción 3:** Eliminar WordPress completamente
+   - Solo si ya no lo necesitas
+
+**Versiones antiguas de Quibu:**
+- `quibuv2/` y `quibuv3_old/` serán eliminados (opcional, se preguntará)
+- Se crea backup completo antes de cualquier eliminación
 
 ---
 
@@ -52,6 +76,10 @@ sudo bash install-clean-keep-db.sh
 El script te preguntará:
 - ✅ Usuario y contraseña de MySQL
 - ✅ Nombre de tu base de datos existente
+- ✅ **Qué hacer con WordPress** (si existe):
+  - Mover a subdirectorio `/var/www/html/wordpress`
+  - Mantener y mezclar con Quibu V4 (no recomendado)
+  - Eliminar completamente
 - ✅ Si deseas eliminar quibuv2 y quibuv3_old
 - ✅ Si deseas crear tablas faltantes
 - ✅ Si deseas ejecutar migración de Mercado Pago
@@ -62,7 +90,7 @@ El script te preguntará:
 El script creará el archivo `.env` automáticamente con tu base de datos, pero debes agregar:
 
 ```bash
-nano /var/www/html/quibuv4/.env
+nano /var/www/html/.env
 ```
 
 Agregar tus credenciales:
@@ -90,20 +118,15 @@ TRANSBANK_COMMERCE_CODE=tu_commerce_code
 BACKUP_DIR="/home/backup-quibu-$(date +%Y%m%d-%H%M%S)"
 mkdir -p "$BACKUP_DIR"
 
-# Backup de archivos
-sudo tar -czf "$BACKUP_DIR/archivos.tar.gz" \
-  /var/www/html/api \
-  /var/www/html/dashboard \
-  /var/www/html/pagar \
-  /var/www/html/pago-landing \
-  /var/www/html/quibuv2 \
-  /var/www/html/quibuv3_old
+# Backup COMPLETO de la raíz HTML actual
+sudo tar -czf "$BACKUP_DIR/html-root-complete.tar.gz" -C /var/www html
 
 # Backup de base de datos
 mysqldump -u root -p tu_base_datos > "$BACKUP_DIR/database.sql"
 gzip "$BACKUP_DIR/database.sql"
 
 echo "Backup guardado en: $BACKUP_DIR"
+echo "Contenido: raíz HTML completa + base de datos"
 ```
 
 ### Paso 2: Verificar Base de Datos Actual
@@ -124,30 +147,72 @@ SELECT COUNT(*) FROM wp_pagos_cuotas;
 EXIT;
 ```
 
-### Paso 3: Instalar Archivos de Quibu V4
+### Paso 3: Manejar WordPress (si existe)
+
+Si tienes WordPress instalado en la raíz HTML:
 
 ```bash
-cd /var/www/html/
+# Verificar si existe WordPress
+if [ -f /var/www/html/wp-config.php ]; then
+    echo "WordPress detectado"
 
-# Clonar repo
-git clone https://github.com/CrtZeroIqq/quibuv4.git
+    # OPCIÓN 1: Mover WordPress a subdirectorio (recomendado)
+    sudo mkdir -p /var/www/html/wordpress
+    sudo mv /var/www/html/wp-* /var/www/html/wordpress/
+    sudo mv /var/www/html/xmlrpc.php /var/www/html/wordpress/ 2>/dev/null || true
+    sudo mv /var/www/html/license.txt /var/www/html/wordpress/ 2>/dev/null || true
+    sudo mv /var/www/html/readme.html /var/www/html/wordpress/ 2>/dev/null || true
+    echo "WordPress movido a /var/www/html/wordpress"
 
-# Verificar contenido
-ls -la quibuv4/
+    # Después accederás a WordPress en: https://www.quibu.cl/wordpress
+fi
 ```
 
-### Paso 4: Instalar Dependencias
+**⚠️ Alternativa:** Si prefieres eliminar WordPress completamente, consulta con tu equipo primero.
+
+### Paso 4: Limpiar versiones antiguas
 
 ```bash
-cd /var/www/html/quibuv4
+# Eliminar versiones antiguas de Quibu (opcional)
+sudo rm -rf /var/www/html/quibuv2
+sudo rm -rf /var/www/html/quibuv3_old
+
+# Limpiar carpetas de Quibu V4 existentes
+sudo rm -rf /var/www/html/api
+sudo rm -rf /var/www/html/dashboard
+sudo rm -rf /var/www/html/pagar
+sudo rm -rf /var/www/html/pago-landing
+sudo rm -rf /var/www/html/vendor
+```
+
+### Paso 5: Instalar Archivos de Quibu V4
+
+```bash
+# Clonar repo en directorio temporal
+cd /tmp
+git clone https://github.com/CrtZeroIqq/quibuv4.git
+cd quibuv4
+
+# Copiar archivos directamente a la raíz HTML
+sudo rsync -av --exclude='.git' --exclude='node_modules' --exclude='wordpress' ./ /var/www/html/
+
+echo "✓ Archivos de Quibu V4 instalados en /var/www/html"
+```
+
+### Paso 6: Instalar Dependencias
+
+```bash
+cd /var/www/html
 
 # Instalar con Composer
 composer install --no-dev --optimize-autoloader
 ```
 
-### Paso 5: Configurar .env
+### Paso 7: Configurar .env
 
 ```bash
+cd /var/www/html
+
 # Copiar ejemplo
 cp .env.example .env
 
@@ -171,14 +236,14 @@ DB_PASS=tu_contraseña              # ← Tu contraseña MySQL actual
 # ======================
 MP_CLIENT_ID=tu_client_id
 MP_CLIENT_SECRET=tu_client_secret
-MP_REDIRECT_URI=https://www.quibu.cl/quibuv4/api/mp-callback.php
-MP_WEBHOOK_URL=https://www.quibu.cl/quibuv4/api/mp-webhook.php
+MP_REDIRECT_URI=https://www.quibu.cl/api/mp-callback.php
+MP_WEBHOOK_URL=https://www.quibu.cl/api/mp-webhook.php
 MP_MODE=sandbox
 
 # URLs de retorno
-MP_SUCCESS_URL=https://www.quibu.cl/quibuv4/pago-exitoso.php
-MP_FAILURE_URL=https://www.quibu.cl/quibuv4/pago-fallido.php
-MP_PENDING_URL=https://www.quibu.cl/quibuv4/pago-pendiente.php
+MP_SUCCESS_URL=https://www.quibu.cl/pago-exitoso.php
+MP_FAILURE_URL=https://www.quibu.cl/pago-fallido.php
+MP_PENDING_URL=https://www.quibu.cl/pago-pendiente.php
 
 # ======================
 # MERCADO PAGO - QUIBU (COLLECTOR)
@@ -192,17 +257,17 @@ QUIBU_MP_PUBLIC_KEY=tu_public_key_quibu
 TRANSBANK_MODE=integration
 TRANSBANK_API_KEY=579B532A7440BB0C9079DED94D31EA1615BACEB56610332264630D42D0A36B1C
 TRANSBANK_COMMERCE_CODE=597055555532
-TRANSBANK_RETURN_URL=https://www.quibu.cl/quibuv4/api/respuesta-pago.php
+TRANSBANK_RETURN_URL=https://www.quibu.cl/api/respuesta-pago.php
 
 # ======================
 # GENERAL
 # ======================
 APP_ENV=production
 APP_DEBUG=false
-APP_URL=https://www.quibu.cl/quibuv4
+APP_URL=https://www.quibu.cl
 ```
 
-### Paso 6: Verificar Schema de BD
+### Paso 8: Verificar Schema de BD
 
 **⚠️ IMPORTANTE: No ejecutes `schema.sql` completo si ya tienes datos**
 
@@ -238,47 +303,49 @@ EXIT;
 **O ejecutar el script de migración:**
 
 ```bash
-mysql -u root -p tu_base_datos < /var/www/html/quibuv4/database/migration_mercadopago.sql
+mysql -u root -p tu_base_datos < /var/www/html/database/migration_mercadopago.sql
 ```
 
-### Paso 7: Configurar Permisos
+### Paso 9: Configurar Permisos
 
 ```bash
-# Permisos de archivos
-sudo chown -R www-data:www-data /var/www/html/quibuv4
-sudo find /var/www/html/quibuv4 -type d -exec chmod 755 {} \;
-sudo find /var/www/html/quibuv4 -type f -exec chmod 644 {} \;
+# Permisos de archivos (excluir wordpress si existe)
+sudo chown -R www-data:www-data /var/www/html
+sudo find /var/www/html -type d -exec chmod 755 {} \;
+sudo find /var/www/html -type f -exec chmod 644 {} \;
 
 # Proteger .env
-sudo chmod 600 /var/www/html/quibuv4/.env
+sudo chmod 600 /var/www/html/.env
 
 # Logs (si existe)
-sudo mkdir -p /var/www/html/quibuv4/logs
-sudo chmod 775 /var/www/html/quibuv4/logs
+sudo mkdir -p /var/www/html/logs
+sudo chmod 775 /var/www/html/logs
 ```
 
-### Paso 8: Configurar Apache (Opcional)
+### Paso 10: Configurar Apache (Opcional)
 
-**Opción A: VirtualHost Dedicado**
+**Actualizar configuración del VirtualHost principal:**
 
 ```bash
-sudo nano /etc/apache2/sites-available/quibuv4.conf
+sudo nano /etc/apache2/sites-available/000-default.conf
+# O si tienes un archivo específico para tu dominio:
+# sudo nano /etc/apache2/sites-available/www.quibu.cl.conf
 ```
 
 ```apache
 <VirtualHost *:80>
     ServerName www.quibu.cl
 
-    DocumentRoot /var/www/html/quibuv4
+    DocumentRoot /var/www/html
 
-    <Directory /var/www/html/quibuv4>
+    <Directory /var/www/html>
         Options -Indexes +FollowSymLinks
         AllowOverride All
         Require all granted
     </Directory>
 
-    ErrorLog ${APACHE_LOG_DIR}/quibuv4-error.log
-    CustomLog ${APACHE_LOG_DIR}/quibuv4-access.log combined
+    ErrorLog ${APACHE_LOG_DIR}/quibu-error.log
+    CustomLog ${APACHE_LOG_DIR}/quibu-access.log combined
 
     <FilesMatch "^\.env$">
         Require all denied
@@ -287,8 +354,7 @@ sudo nano /etc/apache2/sites-available/quibuv4.conf
 ```
 
 ```bash
-# Activar sitio
-sudo a2ensite quibuv4.conf
+# Habilitar módulos necesarios
 sudo a2enmod rewrite headers
 sudo apache2ctl configtest
 sudo systemctl reload apache2
@@ -298,7 +364,7 @@ sudo systemctl reload apache2
 
 Si ya tienes Apache configurado, el `.htaccess` incluido funcionará automáticamente.
 
-### Paso 9: Configurar SSL
+### Paso 11: Configurar SSL
 
 ```bash
 # Instalar Certbot si no lo tienes
@@ -312,18 +378,19 @@ sudo certbot --apache -d www.quibu.cl -d quibu.cl
 sudo certbot renew --dry-run
 ```
 
-### Paso 10: Verificar Instalación
+### Paso 12: Verificar Instalación
 
 ```bash
-# Verificar archivos
-ls -la /var/www/html/quibuv4/
+# Verificar archivos de Quibu V4 en la raíz
+ls -la /var/www/html/
+# Deberías ver: api/, dashboard/, pagar/, pago-landing/, vendor/, .env, composer.json
 
 # Verificar .env
-cat /var/www/html/quibuv4/.env | grep DB_NAME
+cat /var/www/html/.env | grep DB_NAME
 
 # Verificar conexión a BD
 php -r "
-require '/var/www/html/quibuv4/api/conexion.php';
+require '/var/www/html/api/conexion.php';
 try {
     \$pdo = getConnection();
     echo 'Conexión exitosa' . PHP_EOL;
@@ -333,7 +400,7 @@ try {
 "
 
 # Ver logs de Apache
-sudo tail -f /var/log/apache2/quibuv4-error.log
+sudo tail -f /var/log/apache2/quibu-error.log
 ```
 
 ---
@@ -344,7 +411,7 @@ sudo tail -f /var/log/apache2/quibuv4-error.log
 
 1. **Probar Landing Page:**
    ```
-   https://www.quibu.cl/quibuv4/pago-landing/
+   https://www.quibu.cl/pago-landing/
    ```
 
 2. **Buscar un RUT existente:**
@@ -354,13 +421,13 @@ sudo tail -f /var/log/apache2/quibuv4-error.log
 
 3. **Ver grupo existente:**
    ```
-   https://www.quibu.cl/quibuv4/pagar/?grupo=1
+   https://www.quibu.cl/pagar/?grupo=1
    ```
    (Reemplaza `1` con un ID de grupo que ya tengas)
 
 4. **Probar API de estadísticas:**
    ```
-   https://www.quibu.cl/quibuv4/api/estadisticas_publicas_grupo.php?idGrupo=1
+   https://www.quibu.cl/api/estadisticas_publicas_grupo.php?idGrupo=1
    ```
 
 ### Verificar Datos en MySQL
@@ -435,7 +502,7 @@ SELECT COUNT(*) FROM wp_pagadores;
 **Solución:**
 ```bash
 # Solo crear tablas faltantes (no elimina datos)
-mysql -u root -p tu_base_datos < /var/www/html/quibuv4/database/schema.sql
+mysql -u root -p tu_base_datos < /var/www/html/database/schema.sql
 ```
 
 ### Error: "Column not found: mp_access_token"
@@ -444,7 +511,7 @@ mysql -u root -p tu_base_datos < /var/www/html/quibuv4/database/schema.sql
 
 **Solución:**
 ```bash
-mysql -u root -p tu_base_datos < /var/www/html/quibuv4/database/migration_mercadopago.sql
+mysql -u root -p tu_base_datos < /var/www/html/database/migration_mercadopago.sql
 ```
 
 ### Datos Antiguos No se Muestran
@@ -469,7 +536,7 @@ ALTER TABLE wp_grupos_cobranza CHANGE nombre_viejo nombre_grupo VARCHAR(255);
 **Solución:**
 ```bash
 # Verificar .env
-cat /var/www/html/quibuv4/.env | grep DB_
+cat /var/www/html/.env | grep DB_
 
 # Probar conexión
 mysql -u tu_usuario -p tu_base_datos -e "SELECT 1"
@@ -508,7 +575,7 @@ mysql -u tu_usuario -p tu_base_datos -e "SELECT 1"
 
 Después de la instalación, verifica:
 
-- [ ] Archivos de Quibu V4 instalados en `/var/www/html/quibuv4/`
+- [ ] Archivos de Quibu V4 instalados en `/var/www/html/`
 - [ ] Dependencias instaladas con Composer
 - [ ] Archivo `.env` configurado con tu BD existente
 - [ ] Columnas de Mercado Pago agregadas a `wp_usuarios_app`
@@ -531,14 +598,14 @@ Después de la instalación, verifica:
 
 ```bash
 # Proteger .env
-sudo chmod 600 /var/www/html/quibuv4/.env
+sudo chmod 600 /var/www/html/.env
 
 # Verificar que Apache bloquea .env
-curl https://www.quibu.cl/quibuv4/.env
+curl https://www.quibu.cl/.env
 # Debería dar 403 Forbidden
 
 # Desactivar debug en producción
-nano /var/www/html/quibuv4/.env
+nano /var/www/html/.env
 # Cambiar: APP_DEBUG=false
 ```
 
@@ -550,24 +617,24 @@ Si tienes problemas:
 
 1. **Revisar logs:**
    ```bash
-   sudo tail -f /var/log/apache2/quibuv4-error.log
+   sudo tail -f /var/log/apache2/quibu-error.log
    sudo tail -f /var/log/apache2/error.log
    ```
 
 2. **Verificar conexión BD:**
    ```bash
-   php -r "require '/var/www/html/quibuv4/api/conexion.php'; getConnection();"
+   php -r "require '/var/www/html/api/conexion.php'; getConnection();"
    ```
 
 3. **Verificar permisos:**
    ```bash
-   ls -la /var/www/html/quibuv4/
+   ls -la /var/www/html/
    ```
 
 4. **Restaurar backup si es necesario:**
    ```bash
-   # Restaurar archivos
-   tar -xzf /home/backup-quibu-FECHA/archivos.tar.gz -C /
+   # Restaurar archivos completos de la raíz HTML
+   tar -xzf /home/backup-quibu-FECHA/html-root-complete.tar.gz -C /var/www/
 
    # Restaurar BD
    gunzip < /home/backup-quibu-FECHA/database.sql.gz | mysql -u root -p tu_base_datos
@@ -580,9 +647,9 @@ Si tienes problemas:
 Tu instalación de Quibu V4 está completa con todos tus datos conservados.
 
 **URLs de acceso:**
-- Landing: `https://www.quibu.cl/quibuv4/pago-landing/`
-- Pagar: `https://www.quibu.cl/quibuv4/pagar/?grupo=ID`
-- Dashboard: `https://www.quibu.cl/quibuv4/dashboard/`
+- Landing: `https://www.quibu.cl/pago-landing/`
+- Pagar: `https://www.quibu.cl/pagar/?grupo=ID`
+- Dashboard: `https://www.quibu.cl/dashboard/`
 
 **Próximos pasos:**
 1. Configurar webhooks en Mercado Pago

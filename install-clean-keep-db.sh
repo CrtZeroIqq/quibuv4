@@ -1,10 +1,15 @@
 #!/bin/bash
 
 ###############################################################################
-# Quibu V4 - Instalación Limpia con Base de Datos Existente
+# Quibu V4 - Instalación Limpia en Raíz HTML con Base de Datos Existente
 #
-# Este script instala Quibu V4 de forma limpia CONSERVANDO tu base de datos
-# actual con todos los datos de quibuv2/v3.
+# Este script instala Quibu V4 directamente en /var/www/html CONSERVANDO
+# tu base de datos actual con todos los datos de quibuv2/v3.
+#
+# - Instala en la raíz HTML (no en subdirectorio)
+# - Maneja WordPress existente (opción de mover a subdirectorio)
+# - Preserva 100% de los datos de la base de datos
+# - Crea backup completo antes de cualquier cambio
 #
 # Uso: sudo bash install-clean-keep-db.sh
 ###############################################################################
@@ -60,7 +65,7 @@ if [ "$CONFIRM" != "s" ]; then
 fi
 
 # Variables
-INSTALL_DIR="/var/www/html/quibuv4"
+INSTALL_DIR="/var/www/html"
 BACKUP_DIR="/home/backup-quibu-$(date +%Y%m%d-%H%M%S)"
 WEB_USER="www-data"
 
@@ -102,13 +107,14 @@ print_header "Creando Backup de Archivos Actuales"
 
 mkdir -p "$BACKUP_DIR"
 
-# Backup de carpetas existentes
-for DIR in api dashboard pagar pago-landing quibuv2 quibuv3_old; do
-    if [ -d "/var/www/html/$DIR" ]; then
-        print_info "Backing up $DIR..."
-        tar -czf "$BACKUP_DIR/$DIR.tar.gz" "/var/www/html/$DIR" 2>/dev/null || true
-    fi
-done
+# Backup completo de la raíz HTML actual
+print_info "Backing up TODO el contenido de /var/www/html..."
+if [ "$(ls -A $INSTALL_DIR)" ]; then
+    tar -czf "$BACKUP_DIR/html-root-complete.tar.gz" -C /var/www html 2>/dev/null || true
+    print_success "Backup de archivos creado"
+else
+    print_info "La raíz HTML está vacía, no hay nada que respaldar"
+fi
 
 # Backup de base de datos
 print_info "Backing up base de datos..."
@@ -118,20 +124,86 @@ gzip "$BACKUP_DIR/database.sql"
 print_success "Backup completo guardado en: $BACKUP_DIR"
 
 # Paso 3: Limpiar instalaciones anteriores
-print_header "Limpiando Instalaciones Anteriores"
+print_header "Preparando Raíz HTML para Instalación"
 
-read -p "¿Deseas eliminar quibuv2 y quibuv3_old? (s/n): " REMOVE_OLD
-if [ "$REMOVE_OLD" == "s" ]; then
-    rm -rf /var/www/html/quibuv2
-    rm -rf /var/www/html/quibuv3_old
-    print_success "Versiones antiguas eliminadas"
+echo ""
+print_warning "IMPORTANTE: Quibu V4 se instalará directamente en /var/www/html"
+print_info "Se ha creado un backup completo en: $BACKUP_DIR"
+echo ""
+
+# Verificar si hay WordPress
+if [ -f "$INSTALL_DIR/wp-config.php" ]; then
+    print_warning "Se detectó una instalación de WordPress en la raíz"
+    echo ""
+    echo "Opciones:"
+    echo "  1) Mover WordPress a /var/www/html/wordpress (subdirectorio)"
+    echo "  2) Mantener WordPress y mezclar con Quibu V4 (no recomendado)"
+    echo "  3) Eliminar WordPress completamente"
+    echo "  4) Cancelar instalación"
+    echo ""
+    read -p "Selecciona una opción (1-4): " WP_OPTION
+
+    case $WP_OPTION in
+        1)
+            mkdir -p "$INSTALL_DIR/wordpress"
+            print_info "Moviendo WordPress a /var/www/html/wordpress..."
+            # Mover todos los archivos de WordPress
+            for item in wp-* xmlrpc.php license.txt readme.html wp-includes wp-content wp-admin index.php; do
+                if [ -e "$INSTALL_DIR/$item" ]; then
+                    mv "$INSTALL_DIR/$item" "$INSTALL_DIR/wordpress/" 2>/dev/null || true
+                fi
+            done
+            print_success "WordPress movido a subdirectorio"
+            ;;
+        2)
+            print_warning "Se mantendrá WordPress en la raíz y se mezclarán los archivos"
+            print_warning "Esto puede causar conflictos. Asegúrate de probar todo después."
+            ;;
+        3)
+            print_warning "Eliminando WordPress..."
+            rm -rf "$INSTALL_DIR"/wp-*
+            rm -f "$INSTALL_DIR/xmlrpc.php" "$INSTALL_DIR/license.txt" "$INSTALL_DIR/readme.html"
+            print_success "WordPress eliminado"
+            ;;
+        4)
+            print_error "Instalación cancelada por el usuario"
+            exit 1
+            ;;
+        *)
+            print_error "Opción inválida"
+            exit 1
+            ;;
+    esac
 fi
 
-# Eliminar instalación actual de quibuv4 si existe
-if [ -d "$INSTALL_DIR" ]; then
-    print_warning "Eliminando instalación anterior de quibuv4..."
-    rm -rf "$INSTALL_DIR"
+# Limpiar versiones antiguas de Quibu
+echo ""
+if [ -d "$INSTALL_DIR/quibuv2" ] || [ -d "$INSTALL_DIR/quibuv3_old" ]; then
+    print_warning "Se detectaron versiones antiguas de Quibu"
+    read -p "¿Deseas eliminar quibuv2 y quibuv3_old? (s/n): " REMOVE_OLD
+    if [ "$REMOVE_OLD" == "s" ]; then
+        rm -rf "$INSTALL_DIR/quibuv2"
+        rm -rf "$INSTALL_DIR/quibuv3_old"
+        print_success "Versiones antiguas eliminadas"
+    fi
 fi
+
+# Eliminar carpetas específicas de Quibu V4 existente para instalar limpio
+print_info "Limpiando carpetas de Quibu V4 existentes..."
+for DIR in api dashboard pagar pago-landing vendor; do
+    if [ -d "$INSTALL_DIR/$DIR" ]; then
+        rm -rf "$INSTALL_DIR/$DIR"
+    fi
+done
+
+# Eliminar archivos específicos de Quibu V4
+for FILE in composer.json composer.lock .env .env.example .gitignore; do
+    if [ -f "$INSTALL_DIR/$FILE" ]; then
+        rm -f "$INSTALL_DIR/$FILE"
+    fi
+done
+
+print_success "Raíz HTML preparada para instalación"
 
 # Paso 4: Instalar archivos de Quibu V4
 print_header "Instalando Archivos de Quibu V4"
@@ -142,13 +214,13 @@ if [ ! -d ".git" ]; then
     exit 1
 fi
 
-# Crear directorio
+# Asegurar que el directorio existe
 mkdir -p "$INSTALL_DIR"
 
-# Copiar archivos (excluyendo git y node_modules)
-print_info "Copiando archivos..."
-rsync -av --exclude='.git' --exclude='node_modules' --exclude='backup-*' ./ "$INSTALL_DIR/"
-print_success "Archivos copiados a $INSTALL_DIR"
+# Copiar archivos directamente a la raíz (excluyendo git y node_modules)
+print_info "Copiando archivos a /var/www/html..."
+rsync -av --exclude='.git' --exclude='node_modules' --exclude='backup-*' --exclude='wordpress' ./ "$INSTALL_DIR/"
+print_success "Archivos de Quibu V4 instalados en la raíz HTML"
 
 # Paso 5: Instalar dependencias
 print_header "Instalando Dependencias de Composer"
@@ -247,12 +319,20 @@ print_success "Permisos configurados"
 # Paso 9: Configurar Apache (opcional)
 print_header "Configuración de Apache (Opcional)"
 
-read -p "¿Deseas configurar Apache VirtualHost? (s/n): " SETUP_APACHE
+read -p "¿Deseas actualizar la configuración de Apache? (s/n): " SETUP_APACHE
 if [ "$SETUP_APACHE" == "s" ]; then
     read -p "Dominio (www.quibu.cl): " DOMAIN
     DOMAIN=${DOMAIN:-www.quibu.cl}
 
-    cat > /etc/apache2/sites-available/quibuv4.conf <<EOF
+    # Buscar archivo de configuración existente
+    CONF_FILE="/etc/apache2/sites-available/000-default.conf"
+    if [ -f "/etc/apache2/sites-available/$DOMAIN.conf" ]; then
+        CONF_FILE="/etc/apache2/sites-available/$DOMAIN.conf"
+    fi
+
+    print_info "Configurando $CONF_FILE..."
+
+    cat > "$CONF_FILE" <<EOF
 <VirtualHost *:80>
     ServerName $DOMAIN
 
@@ -264,20 +344,24 @@ if [ "$SETUP_APACHE" == "s" ]; then
         Require all granted
     </Directory>
 
-    ErrorLog \${APACHE_LOG_DIR}/quibuv4-error.log
-    CustomLog \${APACHE_LOG_DIR}/quibuv4-access.log combined
+    ErrorLog \${APACHE_LOG_DIR}/quibu-error.log
+    CustomLog \${APACHE_LOG_DIR}/quibu-access.log combined
 
+    # Proteger archivos sensibles
     <FilesMatch "^\.env$">
+        Require all denied
+    </FilesMatch>
+
+    <FilesMatch "^composer\.(json|lock)$">
         Require all denied
     </FilesMatch>
 </VirtualHost>
 EOF
 
-    a2ensite quibuv4.conf
     a2enmod rewrite headers
     apache2ctl configtest && systemctl reload apache2
 
-    print_success "Apache configurado"
+    print_success "Apache configurado para servir Quibu V4 desde la raíz"
 fi
 
 # Paso 10: Resumen final
@@ -291,10 +375,10 @@ print_info "Base de datos: $DB_NAME (datos conservados)"
 print_info "Backup guardado en: $BACKUP_DIR"
 echo ""
 
-print_info "URLs de acceso:"
-echo "  - Landing: https://www.quibu.cl/quibuv4/pago-landing/"
-echo "  - Pagar: https://www.quibu.cl/quibuv4/pagar/?grupo=ID"
-echo "  - Dashboard: https://www.quibu.cl/quibuv4/dashboard/"
+print_info "URLs de acceso (Quibu V4 en la raíz):"
+echo "  - Landing: https://www.quibu.cl/pago-landing/"
+echo "  - Pagar: https://www.quibu.cl/pagar/?grupo=ID"
+echo "  - Dashboard: https://www.quibu.cl/dashboard/"
 echo ""
 
 print_warning "TAREAS PENDIENTES:"
