@@ -91,13 +91,20 @@ try {
 
     // Cuotas pendientes del mes actual
     $mes_actual = date('Y-m');
+
+    // Verificar si existe la columna descripcion
+    $columns = $pdo->query("SHOW COLUMNS FROM wp_cuotas_definidas LIKE 'descripcion'")->fetchAll();
+    $has_descripcion = count($columns) > 0;
+
+    $sql_descripcion = $has_descripcion ? ", cd.descripcion" : "";
+
     $stmt = $pdo->prepare("
         SELECT
             cd.id,
             cd.nro_cuota,
             cd.fecha_cuota,
-            cd.valor,
-            cd.descripcion
+            cd.valor
+            $sql_descripcion
         FROM wp_cuotas_definidas cd
         WHERE cd.id_grupo = ?
         AND DATE_FORMAT(cd.fecha_cuota, '%Y-%m') = ?
@@ -112,7 +119,7 @@ try {
         'grupo' => [
             'id' => $grupo['id'],
             'nombre' => $grupo['nombre_grupo'],
-            'descripcion' => $grupo['descripcion'] ?? '',
+            'descripcion' => $grupo['tipo_grupo'] ?? '',  // Usar tipo_grupo como descripción
             'cantidadPersonas' => intval($grupo['cantidad_personas'] ?? 0),
             'tipoGrupo' => $grupo['tipo_grupo'] ?? '',
             'tesorero' => [
