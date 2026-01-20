@@ -34,17 +34,25 @@ function respond($success, $data = [], $message = '', $code = 200) {
 }
 
 try {
-    // Solo aceptar POST
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        respond(false, [], 'Método no permitido. Use POST.', 405);
+    // Aceptar POST y GET
+    $method = $_SERVER['REQUEST_METHOD'];
+
+    if (!in_array($method, ['POST', 'GET'])) {
+        respond(false, [], 'Método no permitido. Use POST o GET.', 405);
     }
 
-    // Obtener datos del request
-    $input = json_decode(file_get_contents('php://input'), true);
+    // Obtener datos según el método
+    if ($method === 'POST') {
+        // Intentar JSON primero
+        $input = json_decode(file_get_contents('php://input'), true);
 
-    // Si no viene JSON, intentar con POST normal
-    if (!$input) {
-        $input = $_POST;
+        // Si no viene JSON, usar POST normal
+        if (!$input) {
+            $input = $_POST;
+        }
+    } else {
+        // GET request
+        $input = $_GET;
     }
 
     // Validar que venga el email
