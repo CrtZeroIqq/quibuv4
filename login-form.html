@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Quibu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            color: #667eea;
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .logo p {
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        input[type="email"] {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        input[type="email"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-error {
+            background: #fee;
+            border: 1px solid #fcc;
+            color: #c33;
+        }
+
+        .alert-success {
+            background: #efe;
+            border: 1px solid #cfc;
+            color: #3c3;
+        }
+
+        .alert-info {
+            background: #eef;
+            border: 1px solid #ccf;
+            color: #33c;
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .register-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .user-info {
+            display: none;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .user-info.active {
+            display: block;
+        }
+
+        .user-info h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .user-info p {
+            color: #666;
+            margin: 8px 0;
+            font-size: 14px;
+        }
+
+        .user-info strong {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <h1>Quibu</h1>
+            <p>Sistema de Cobranza Automatizada</p>
+        </div>
+
+        <div id="alertContainer"></div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">Correo Electrónico</label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="tu@email.com"
+                    required
+                >
+            </div>
+
+            <button type="submit" class="btn" id="loginBtn">
+                Iniciar Sesión
+            </button>
+        </form>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p style="margin-top: 10px; color: #666;">Iniciando sesión...</p>
+        </div>
+
+        <div class="user-info" id="userInfo">
+            <h3>¡Login Exitoso!</h3>
+            <p><strong>ID:</strong> <span id="userId"></span></p>
+            <p><strong>Nombre:</strong> <span id="userName"></span></p>
+            <p><strong>Email:</strong> <span id="userEmail"></span></p>
+            <p><strong>RUT:</strong> <span id="userRut"></span></p>
+            <p><strong>Grupos:</strong> <span id="userGroups"></span></p>
+            <p><strong>Mercado Pago:</strong> <span id="userMP"></span></p>
+            <p style="margin-top: 15px;">
+                <a href="api/listar_grupos.php" style="color: #667eea;">Ver mis grupos →</a>
+            </p>
+        </div>
+
+        <div class="register-link">
+            ¿No tienes cuenta? <a href="register-form.html">Regístrate aquí</a>
+        </div>
+    </div>
+
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        const loginBtn = document.getElementById('loginBtn');
+        const loading = document.getElementById('loading');
+        const userInfo = document.getElementById('userInfo');
+        const alertContainer = document.getElementById('alertContainer');
+
+        // Verificar si hay error en URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const error = urlParams.get('error');
+
+        if (error === 'session_expired') {
+            showAlert('Tu sesión ha expirado. Por favor inicia sesión nuevamente.', 'info');
+        }
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+
+            // Validar email
+            if (!email) {
+                showAlert('Por favor ingresa tu email', 'error');
+                return;
+            }
+
+            // Mostrar loading
+            loginBtn.disabled = true;
+            loading.classList.add('active');
+            alertContainer.innerHTML = '';
+
+            try {
+                const response = await fetch('/login.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Login exitoso
+                    showAlert(data.message, 'success');
+
+                    // Mostrar información del usuario
+                    const usuario = data.data.usuario;
+                    document.getElementById('userId').textContent = usuario.id;
+                    document.getElementById('userName').textContent = usuario.nombre;
+                    document.getElementById('userEmail').textContent = usuario.email;
+                    document.getElementById('userRut').textContent = usuario.rut || 'No especificado';
+                    document.getElementById('userGroups').textContent = usuario.grupos_count;
+                    document.getElementById('userMP').textContent = usuario.mercadopago_vinculado ?
+                        '✅ Vinculado' : '❌ No vinculado';
+
+                    loginForm.style.display = 'none';
+                    userInfo.classList.add('active');
+
+                    // Opcional: Redirigir al dashboard después de 2 segundos
+                    // setTimeout(() => {
+                    //     window.location.href = '/dashboard/';
+                    // }, 2000);
+
+                } else {
+                    // Error en login
+                    showAlert(data.message, 'error');
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Error de conexión. Por favor intenta nuevamente.', 'error');
+            } finally {
+                loginBtn.disabled = false;
+                loading.classList.remove('active');
+            }
+        });
+
+        function showAlert(message, type) {
+            const alertClass = `alert-${type}`;
+            alertContainer.innerHTML = `
+                <div class="alert ${alertClass}">
+                    ${message}
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
