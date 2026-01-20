@@ -82,12 +82,12 @@ try {
     // Generar state token (para seguridad CSRF)
     $state = bin2hex(random_bytes(16)) . '_' . $usuario_id;
 
-    // Guardar state en la BD temporalmente (válido por 10 minutos)
+    // Guardar state en la BD temporalmente (válido por 30 minutos)
     try {
         $stmt = $pdo->prepare("
             INSERT INTO wp_mp_oauth_states (state_token, usuario_id, expires_at)
-            VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 10 MINUTE))
-            ON DUPLICATE KEY UPDATE expires_at = DATE_ADD(NOW(), INTERVAL 10 MINUTE)
+            VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 30 MINUTE))
+            ON DUPLICATE KEY UPDATE expires_at = DATE_ADD(NOW(), INTERVAL 30 MINUTE)
         ");
         $stmt->execute([$state, $usuario_id]);
     } catch (Exception $e) {
