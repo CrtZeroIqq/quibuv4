@@ -24,42 +24,18 @@ try {
     $state_parts = explode('_', $state);
     $usuario_id = end($state_parts); // Último elemento es el usuario_id
 
-    if (!is_numeric($usuario_id)) {
+    if (!is_numeric($usuario_id) || $usuario_id <= 0) {
         throw new Exception('State token inválido');
     }
 
-    // Validar state token en la BD
-    $stmt = $pdo->prepare("
-        SELECT usuario_id, used, expires_at
-        FROM wp_mp_oauth_states
-        WHERE state_token = ?
-        LIMIT 1
-    ");
-    $stmt->execute([$state]);
-    $state_record = $stmt->fetch();
+    // Verificar que el usuario exista
+    $stmt = $pdo->prepare("SELECT id, nombre, email FROM wp_usuarios_app WHERE id = ?");
+    $stmt->execute([$usuario_id]);
+    $usuario = $stmt->fetch();
 
-    // Validar que el state existe y no ha sido usado
-    if (!$state_record) {
-        throw new Exception('State token no encontrado o ya fue usado');
+    if (!$usuario) {
+        throw new Exception('Usuario no encontrado');
     }
-
-    if ($state_record['used'] == 1) {
-        throw new Exception('State token ya fue utilizado');
-    }
-
-    // Validar que no haya expirado
-    if (strtotime($state_record['expires_at']) < time()) {
-        throw new Exception('State token expirado');
-    }
-
-    // Validar que el usuario_id coincida
-    if ($state_record['usuario_id'] != $usuario_id) {
-        throw new Exception('State token no coincide con usuario');
-    }
-
-    // Marcar state como usado
-    $stmt = $pdo->prepare("UPDATE wp_mp_oauth_states SET used = 1 WHERE state_token = ?");
-    $stmt->execute([$state]);
 
     // Intercambiar el código por un access token
     $token_data = intercambiar_codigo_por_token($code);
@@ -90,15 +66,10 @@ try {
         $usuario_id
     ]);
 
-    // Obtener datos del usuario para mostrar
-    $stmt = $pdo->prepare("SELECT nombre, email FROM wp_usuarios_app WHERE id = ?");
-    $stmt->execute([$usuario_id]);
-    $usuario = $stmt->fetch();
-
     // Log exitoso
     error_log("Usuario $usuario_id vinculó Mercado Pago exitosamente. MP User ID: " . ($mp_user_info['id'] ?? 'N/A'));
 
-    // Mostrar página de éxito
+    // Mostrar página de éxito (usuario ya fue obtenido arriba)
     mostrar_exito($usuario['nombre'] ?? 'Usuario', $mp_user_info);
 
 } catch (Exception $e) {

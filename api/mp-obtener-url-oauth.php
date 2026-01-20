@@ -59,41 +59,9 @@ try {
         exit;
     }
 
-    // Crear tabla de states si no existe (para primera ejecución)
-    try {
-        $pdo->exec("
-            CREATE TABLE IF NOT EXISTS wp_mp_oauth_states (
-                id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                state_token VARCHAR(255) NOT NULL UNIQUE,
-                usuario_id BIGINT UNSIGNED NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                expires_at DATETIME NOT NULL,
-                used TINYINT(1) DEFAULT 0,
-                INDEX idx_state_token (state_token),
-                INDEX idx_usuario_id (usuario_id),
-                INDEX idx_expires_at (expires_at)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-        ");
-    } catch (Exception $e) {
-        // Si falla crear tabla, continuar igual (puede que ya exista)
-        error_log("Error creando tabla wp_mp_oauth_states: " . $e->getMessage());
-    }
-
-    // Generar state token (para seguridad CSRF)
+    // Generar state token simple (formato: random_hex_usuario_id)
+    // No guardamos en BD, solo validamos que el usuario_id sea válido en el callback
     $state = bin2hex(random_bytes(16)) . '_' . $usuario_id;
-
-    // Guardar state en la BD temporalmente (válido por 30 minutos)
-    try {
-        $stmt = $pdo->prepare("
-            INSERT INTO wp_mp_oauth_states (state_token, usuario_id, expires_at)
-            VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 30 MINUTE))
-            ON DUPLICATE KEY UPDATE expires_at = DATE_ADD(NOW(), INTERVAL 30 MINUTE)
-        ");
-        $stmt->execute([$state, $usuario_id]);
-    } catch (Exception $e) {
-        error_log("Error guardando state token: " . $e->getMessage());
-        // Si falla, usar state sin guardar (menos seguro pero funcional)
-    }
 
     // Construir URL de autorización de Mercado Pago
     $params = [
