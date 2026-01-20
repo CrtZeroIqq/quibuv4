@@ -41,7 +41,18 @@ try {
     $token_data = intercambiar_codigo_por_token($code);
 
     if (!$token_data || !isset($token_data['access_token'])) {
-        throw new Exception('No se recibió access token de Mercado Pago');
+        // Loguear la respuesta completa para debugging
+        error_log("Error intercambiando código OAuth. Response: " . json_encode($token_data));
+
+        $error_msg = 'No se recibió access token de Mercado Pago.';
+        if (isset($token_data['message'])) {
+            $error_msg .= ' Mensaje: ' . $token_data['message'];
+        }
+        if (isset($token_data['error'])) {
+            $error_msg .= ' Error: ' . $token_data['error'];
+        }
+
+        throw new Exception($error_msg);
     }
 
     // Obtener información del usuario de Mercado Pago
