@@ -10,14 +10,66 @@
 if (file_exists(__DIR__ . '/../.env')) {
     $envFile = file(__DIR__ . '/../.env', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     foreach ($envFile as $line) {
-        if (strpos(trim($line), '#') === 0) {
+        $line = trim($line);
+        if ($line === '' || strpos($line, '#') === 0) {
             continue;
         }
+
+        if (strpos($line, 'export ') === 0) {
+            $line = trim(substr($line, 7));
+        }
+
         if (strpos($line, '=') !== false) {
             list($key, $value) = explode('=', $line, 2);
-            $_ENV[trim($key)] = trim($value);
+            $key = trim($key);
+            $value = normalizar_valor_env($value);
+            $_ENV[$key] = $value;
+            putenv($key . '=' . $value);
         }
     }
+}
+
+/**
+ * Normalizar valores de entorno cargados desde .env
+ */
+function normalizar_valor_env($value) {
+    $value = trim($value);
+
+    if ($value === '') {
+        return '';
+    }
+
+    if ((substr($value, 0, 1) === '"' && substr($value, -1) === '"') ||
+        (substr($value, 0, 1) === "'" && substr($value, -1) === "'")) {
+        $value = substr($value, 1, -1);
+    }
+
+    $hashPos = strpos($value, ' #');
+    if ($hashPos !== false) {
+        $value = substr($value, 0, $hashPos);
+    }
+
+    return trim($value);
+}
+
+/**
+ * Obtener valor de entorno desde distintas fuentes.
+ */
+function obtener_valor_env($key) {
+    if (array_key_exists($key, $_ENV)) {
+        return $_ENV[$key];
+    }
+
+    if (array_key_exists($key, $_SERVER)) {
+        return $_SERVER[$key];
+    }
+
+    $value = getenv($key);
+    if ($value !== false) {
+        return $value;
+    }
+
+    return null;
 }
 
 /**
@@ -26,8 +78,8 @@ if (file_exists(__DIR__ . '/../.env')) {
  * Obtener en: https://www.mercadopago.cl/developers/panel/app
  * Se necesita crear una aplicación en el panel de desarrolladores
  */
-define('MP_CLIENT_ID', $_ENV['MP_CLIENT_ID'] ?? '');
-define('MP_CLIENT_SECRET', $_ENV['MP_CLIENT_SECRET'] ?? '');
+define('MP_CLIENT_ID', obtener_valor_env('MP_CLIENT_ID') ?? '');
+define('MP_CLIENT_SECRET', obtener_valor_env('MP_CLIENT_SECRET') ?? '');
 
 /**
  * CREDENCIALES DE QUIBU (MARKETPLACE/COLLECTOR)
@@ -35,8 +87,8 @@ define('MP_CLIENT_SECRET', $_ENV['MP_CLIENT_SECRET'] ?? '');
  * Access token de la cuenta de Mercado Pago de Quibu
  * Esta cuenta recibirá los fees (comisiones) de cada transacción
  */
-define('QUIBU_MP_ACCESS_TOKEN', $_ENV['QUIBU_MP_ACCESS_TOKEN'] ?? '');
-define('QUIBU_MP_PUBLIC_KEY', $_ENV['QUIBU_MP_PUBLIC_KEY'] ?? '');
+define('QUIBU_MP_ACCESS_TOKEN', obtener_valor_env('QUIBU_MP_ACCESS_TOKEN') ?? '');
+define('QUIBU_MP_PUBLIC_KEY', obtener_valor_env('QUIBU_MP_PUBLIC_KEY') ?? '');
 
 /**
  * URLs OAUTH 2.0
@@ -48,32 +100,32 @@ define('MP_API_URL', 'https://api.mercadopago.com');
  * URL DE RETORNO OAUTH (Redirect URI)
  * Debe estar configurada en el panel de Mercado Pago
  */
-define('MP_REDIRECT_URI', $_ENV['MP_REDIRECT_URI'] ?? 'https://www.quibu.cl/api/mp-callback.php');
+define('MP_REDIRECT_URI', obtener_valor_env('MP_REDIRECT_URI') ?? 'https://www.quibu.cl/api/mp-callback.php');
 
 /**
  * URLs DE RETORNO PARA PAGOS
  */
-define('MP_SUCCESS_URL', $_ENV['MP_SUCCESS_URL'] ?? 'https://www.quibu.cl/pago-exitoso.php');
-define('MP_FAILURE_URL', $_ENV['MP_FAILURE_URL'] ?? 'https://www.quibu.cl/pago-fallido.php');
-define('MP_PENDING_URL', $_ENV['MP_PENDING_URL'] ?? 'https://www.quibu.cl/pago-pendiente.php');
+define('MP_SUCCESS_URL', obtener_valor_env('MP_SUCCESS_URL') ?? 'https://www.quibu.cl/pago-exitoso.php');
+define('MP_FAILURE_URL', obtener_valor_env('MP_FAILURE_URL') ?? 'https://www.quibu.cl/pago-fallido.php');
+define('MP_PENDING_URL', obtener_valor_env('MP_PENDING_URL') ?? 'https://www.quibu.cl/pago-pendiente.php');
 
 /**
  * WEBHOOK URL
  * URL donde Mercado Pago enviará notificaciones de pagos
  */
-define('MP_WEBHOOK_URL', $_ENV['MP_WEBHOOK_URL'] ?? 'https://www.quibu.cl/api/mp-webhook.php');
+define('MP_WEBHOOK_URL', obtener_valor_env('MP_WEBHOOK_URL') ?? 'https://www.quibu.cl/api/mp-webhook.php');
 
 /**
  * MODO DE OPERACIÓN
  * 'sandbox' para testing, 'production' para producción
  */
-define('MP_MODE', $_ENV['MP_MODE'] ?? 'sandbox');
+define('MP_MODE', obtener_valor_env('MP_MODE') ?? 'sandbox');
 
 /**
  * CONFIGURACIÓN DE COMISIONES QUIBU
  * Porcentaje que Quibu retiene de cada transacción
  */
-define('QUIBU_COMMISSION_PERCENT', floatval($_ENV['QUIBU_COMMISSION_PERCENT'] ?? 0));
+define('QUIBU_COMMISSION_PERCENT', floatval(obtener_valor_env('QUIBU_COMMISSION_PERCENT') ?? 0));
 
 /**
  * Validar configuración
