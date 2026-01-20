@@ -69,11 +69,26 @@ read -p "Nombre de la base de datos: " DB_NAME
 echo ""
 echo "Aplicando correcciones a la base de datos..."
 
-mysql -u "$MYSQL_USER" -p"$MYSQL_PASS" "$DB_NAME" <<EOF
+mysql -u "$MYSQL_USER" -p"$MYSQL_PASS" "$DB_NAME" <<'EOF'
 
--- Agregar columna descripcion a wp_cuotas_definidas
-ALTER TABLE wp_cuotas_definidas
-ADD COLUMN IF NOT EXISTS descripcion VARCHAR(255) DEFAULT NULL AFTER valor;
+-- Verificar y agregar columna descripcion solo si no existe
+SET @dbname = DATABASE();
+SET @tablename = "wp_cuotas_definidas";
+SET @columnname = "descripcion";
+SET @preparedStatement = (SELECT IF(
+  (
+    SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE
+      (table_name = @tablename)
+      AND (table_schema = @dbname)
+      AND (column_name = @columnname)
+  ) > 0,
+  "SELECT 'Columna descripcion ya existe' as resultado;",
+  "ALTER TABLE wp_cuotas_definidas ADD COLUMN descripcion VARCHAR(255) DEFAULT NULL AFTER valor;"
+));
+PREPARE alterIfNotExists FROM @preparedStatement;
+EXECUTE alterIfNotExists;
+DEALLOCATE PREPARE alterIfNotExists;
 
 SELECT 'Correcciones aplicadas exitosamente' as resultado;
 
