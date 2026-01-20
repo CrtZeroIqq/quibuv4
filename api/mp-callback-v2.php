@@ -65,7 +65,14 @@ try {
     $token_data = intercambiar_codigo_por_token($code);
 
     if (!$token_data || !isset($token_data['access_token'])) {
-        throw new Exception('No se recibió access token de Mercado Pago');
+        $error_msg = 'No se recibió access token de Mercado Pago';
+        if (isset($token_data['message'])) {
+            $error_msg .= '. Mensaje: ' . $token_data['message'];
+        }
+        if (isset($token_data['error'])) {
+            $error_msg .= ' Error: ' . $token_data['error'];
+        }
+        throw new Exception($error_msg);
     }
 
     // Obtener información del usuario de Mercado Pago
@@ -123,22 +130,31 @@ function intercambiar_codigo_por_token($code) {
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        'Content-Type: application/json',
+        'Content-Type: application/x-www-form-urlencoded',
         'Accept: application/json'
     ]);
 
     $response = curl_exec($ch);
+    if ($response === false) {
+        $curl_error = curl_error($ch);
+        curl_close($ch);
+        error_log("Error de cURL al obtener token de MP: $curl_error");
+        return ['error' => 'curl_error', 'message' => $curl_error];
+    }
+
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
 
-    if ($http_code !== 200) {
+    $decoded = json_decode($response, true);
+
+    if ($http_code < 200 || $http_code >= 300) {
         error_log("Error al obtener token de MP. HTTP Code: $http_code. Response: $response");
-        return null;
+        return is_array($decoded) ? $decoded : ['error' => 'http_error', 'message' => $response];
     }
 
-    return json_decode($response, true);
+    return is_array($decoded) ? $decoded : [];
 }
 
 /**
