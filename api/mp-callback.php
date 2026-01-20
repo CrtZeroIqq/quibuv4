@@ -40,6 +40,10 @@ try {
     // Intercambiar el código por un access token
     $token_data = intercambiar_codigo_por_token($code);
 
+    if (isset($token_data['error']) && should_retry_redirect_uri($token_data)) {
+        $token_data = intercambiar_codigo_por_token($code, obtener_redirect_uri_actual());
+    }
+
     if (!$token_data || !isset($token_data['access_token'])) {
         // Loguear la respuesta completa para debugging
         error_log("Error intercambiando código OAuth. Response: " . json_encode($token_data));
@@ -91,7 +95,7 @@ try {
 /**
  * Intercambiar código de autorización por access token
  */
-function intercambiar_codigo_por_token($code) {
+function intercambiar_codigo_por_token($code, $redirect_uri = null) {
     $url = MP_API_URL . '/oauth/token';
 
     $data = [
@@ -99,7 +103,7 @@ function intercambiar_codigo_por_token($code) {
         'client_secret' => MP_CLIENT_SECRET,
         'grant_type' => 'authorization_code',
         'code' => $code,
-        'redirect_uri' => MP_REDIRECT_URI
+        'redirect_uri' => $redirect_uri ?: MP_REDIRECT_URI
     ];
 
     $ch = curl_init($url);
@@ -130,6 +134,31 @@ function intercambiar_codigo_por_token($code) {
     }
 
     return is_array($decoded) ? $decoded : [];
+}
+
+/**
+ * Determinar si conviene reintentar con la URL real del callback.
+ */
+function should_retry_redirect_uri($token_data) {
+    if (!is_array($token_data)) {
+        return false;
+    }
+
+    $error = strtolower($token_data['error'] ?? '');
+    $message = strtolower($token_data['message'] ?? '');
+
+    return $error === 'invalid_grant' || strpos($message, 'redirect_uri') !== false;
+}
+
+/**
+ * Obtener la URL real del callback (sin querystring).
+ */
+function obtener_redirect_uri_actual() {
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? 'www.quibu.cl';
+    $path = parse_url($_SERVER['REQUEST_URI'] ?? '/api/mp-callback.php', PHP_URL_PATH);
+
+    return $scheme . '://' . $host . $path;
 }
 
 /**
