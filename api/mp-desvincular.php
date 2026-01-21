@@ -1,98 +1,129 @@
 <?php
 /**
- * Quibu - Desvincular cuenta de Mercado Pago
+ * Quibu - Desvincular Cuenta de Mercado Pago
  *
- * Elimina la vinculación de Mercado Pago de un tesorero
+ * Permite al tesorero desvincular su cuenta de Mercado Pago
+ * para poder vincular una cuenta diferente.
+ *
+ * Endpoint: /api/mp-desvincular.php
+ * Método: POST
+ * Parámetros: usuario_id
  */
 
-session_start();
+header('Content-Type: application/json; charset=utf-8');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
+
+// Manejar preflight request
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
+
 require_once __DIR__ . '/conexion.php';
 
-// Verificar que el usuario esté logueado
-if (!isset($_SESSION['usuario_id'])) {
-    header('Location: /login.php?error=session_expired');
+/**
+ * Función helper para responder JSON
+ */
+function respond($success, $data = [], $message = '', $http_code = 200) {
+    http_response_code($http_code);
+    echo json_encode([
+        'success' => $success,
+        'message' => $message,
+        'data' => $data,
+        'timestamp' => date('Y-m-d H:i:s')
+    ], JSON_UNESCAPED_UNICODE);
     exit;
 }
-
-$usuario_id = $_SESSION['usuario_id'];
 
 try {
+    // Validar método
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        respond(false, [], 'Método no permitido. Use POST.', 405);
+    }
+
+    // Obtener datos
+    $input = json_decode(file_get_contents('php://input'), true);
+    if (!$input) {
+        $input = $_POST;
+    }
+
+    $usuario_id = isset($input['usuario_id']) ? intval($input['usuario_id']) : 0;
+
+    if ($usuario_id <= 0) {
+        respond(false, [], 'El parámetro usuario_id es requerido.', 400);
+    }
+
+    // Conectar a BD
     $pdo = getConnection();
 
-    // Obtener información antes de eliminar (para logging)
-    $stmt = $pdo->prepare("SELECT mp_user_id, mp_access_token FROM wp_usuarios_app WHERE id = ?");
+    // Verificar que el usuario exista
+    $stmt = $pdo->prepare("
+        SELECT
+            id,
+            nombre,
+            email,
+            mp_user_id,
+            mp_linked_at
+        FROM wp_usuarios_app
+        WHERE id = ?
+    ");
     $stmt->execute([$usuario_id]);
-    $mp_data = $stmt->fetch();
+    $usuario = $stmt->fetch();
 
-    if ($mp_data && !empty($mp_data['mp_access_token'])) {
-        // Opcional: Revocar el access token en Mercado Pago
-        // Esto es opcional, ya que el token seguirá siendo válido en MP
-        // pero ya no lo usaremos en nuestra aplicación
-        // revocar_token_mp($mp_data['mp_access_token']);
-
-        // Eliminar tokens de la base de datos
-        $stmt = $pdo->prepare("
-            UPDATE wp_usuarios_app
-            SET mp_access_token = NULL,
-                mp_user_id = NULL,
-                mp_public_key = NULL,
-                mp_refresh_token = NULL,
-                mp_linked_at = NULL
-            WHERE id = ?
-        ");
-        $stmt->execute([$usuario_id]);
-
-        // Log de desvinculación exitosa
-        error_log("Usuario $usuario_id desvinculó su cuenta de Mercado Pago. MP User ID: " . ($mp_data['mp_user_id'] ?? 'N/A'));
-
-        header('Location: /dashboard/vincular-mercadopago.php?success=desvinculado');
-        exit;
-    } else {
-        // No había cuenta vinculada
-        header('Location: /dashboard/vincular-mercadopago.php?error=no_vinculado');
-        exit;
+    if (!$usuario) {
+        respond(false, [], 'Usuario no encontrado.', 404);
     }
 
-} catch (Exception $e) {
-    error_log("Error al desvincular Mercado Pago: " . $e->getMessage());
-    header('Location: /dashboard/vincular-mercadopago.php?error=error_desvinculacion');
-    exit;
-}
+    // Verificar que tenga cuenta vinculada
+    if (empty($usuario['mp_user_id'])) {
+        respond(false, [
+            'ya_desvinculado' => true
+        ], 'La cuenta ya está desvinculada (no había ninguna cuenta vinculada).', 200);
+    }
 
-/**
- * Revocar token en Mercado Pago (opcional)
- *
- * @param string $access_token Token a revocar
- * @return bool
- */
-function revocar_token_mp($access_token) {
-    require_once __DIR__ . '/mp-config.php';
-
-    $url = MP_API_URL . '/oauth/token';
-
-    $data = [
-        'client_id' => MP_CLIENT_ID,
-        'client_secret' => MP_CLIENT_SECRET,
-        'token' => $access_token
+    // Guardar info de la cuenta que se desvincula (para log)
+    $cuenta_anterior = [
+        'mp_user_id' => $usuario['mp_user_id'],
+        'vinculada_en' => $usuario['mp_linked_at']
     ];
 
-    $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-    curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        'Content-Type: application/json',
-        'Accept: application/json'
-    ]);
+    // Desvincular cuenta
+    $stmt = $pdo->prepare("
+        UPDATE wp_usuarios_app
+        SET
+            mp_access_token = NULL,
+            mp_user_id = NULL,
+            mp_public_key = NULL,
+            mp_refresh_token = NULL,
+            mp_linked_at = NULL
+        WHERE id = ?
+    ");
+    $stmt->execute([$usuario_id]);
 
-    $response = curl_exec($ch);
-    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
+    // Log
+    error_log("Cuenta MP desvinculada - Usuario: {$usuario['nombre']} (ID: {$usuario_id}), MP User ID anterior: {$cuenta_anterior['mp_user_id']}");
 
-    if ($http_code !== 200) {
-        error_log("Error al revocar token MP. HTTP Code: $http_code. Response: $response");
-        return false;
-    }
+    // Responder
+    respond(true, [
+        'usuario' => [
+            'id' => $usuario['id'],
+            'nombre' => $usuario['nombre'],
+            'email' => $usuario['email']
+        ],
+        'cuenta_anterior' => $cuenta_anterior,
+        'instrucciones' => [
+            '1. Cierra sesión de Mercado Pago en tu navegador',
+            '2. Vuelve a vincular tu cuenta desde la app',
+            '3. Al autorizar, inicia sesión con TU cuenta personal (no la de la empresa)'
+        ]
+    ], 'Cuenta de Mercado Pago desvinculada exitosamente.', 200);
 
-    return true;
+} catch (PDOException $e) {
+    error_log("Error DB en mp-desvincular: " . $e->getMessage());
+    respond(false, [], 'Error de base de datos.', 500);
+} catch (Exception $e) {
+    error_log("Error en mp-desvincular: " . $e->getMessage());
+    respond(false, [], $e->getMessage(), 500);
 }
