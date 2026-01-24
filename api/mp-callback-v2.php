@@ -64,8 +64,19 @@ try {
     // Intercambiar el código por un access token
     $token_data = intercambiar_codigo_por_token($code);
 
+    if (isset($token_data['error']) && should_retry_redirect_uri($token_data)) {
+        $token_data = intercambiar_codigo_por_token($code, obtener_redirect_uri_actual());
+    }
+
     if (!$token_data || !isset($token_data['access_token'])) {
-        throw new Exception('No se recibió access token de Mercado Pago');
+        $error_msg = 'No se recibió access token de Mercado Pago';
+        if (isset($token_data['message'])) {
+            $error_msg .= '. Mensaje: ' . $token_data['message'];
+        }
+        if (isset($token_data['error'])) {
+            $error_msg .= ' Error: ' . $token_data['error'];
+        }
+        throw new Exception($error_msg);
     }
 
     // Obtener información del usuario de Mercado Pago
@@ -109,7 +120,7 @@ try {
 /**
  * Intercambiar código de autorización por access token
  */
-function intercambiar_codigo_por_token($code) {
+function intercambiar_codigo_por_token($code, $redirect_uri = null) {
     $url = MP_API_URL . '/oauth/token';
 
     $data = [
@@ -117,28 +128,62 @@ function intercambiar_codigo_por_token($code) {
         'client_secret' => MP_CLIENT_SECRET,
         'grant_type' => 'authorization_code',
         'code' => $code,
-        'redirect_uri' => MP_REDIRECT_URI
+        'redirect_uri' => $redirect_uri ?: MP_REDIRECT_URI
     ];
 
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        'Content-Type: application/json',
+        'Content-Type: application/x-www-form-urlencoded',
         'Accept: application/json'
     ]);
 
     $response = curl_exec($ch);
+    if ($response === false) {
+        $curl_error = curl_error($ch);
+        curl_close($ch);
+        error_log("Error de cURL al obtener token de MP: $curl_error");
+        return ['error' => 'curl_error', 'message' => $curl_error];
+    }
+
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
 
-    if ($http_code !== 200) {
+    $decoded = json_decode($response, true);
+
+    if ($http_code < 200 || $http_code >= 300) {
         error_log("Error al obtener token de MP. HTTP Code: $http_code. Response: $response");
-        return null;
+        return is_array($decoded) ? $decoded : ['error' => 'http_error', 'message' => $response];
     }
 
-    return json_decode($response, true);
+    return is_array($decoded) ? $decoded : [];
+}
+
+/**
+ * Determinar si conviene reintentar con la URL real del callback.
+ */
+function should_retry_redirect_uri($token_data) {
+    if (!is_array($token_data)) {
+        return false;
+    }
+
+    $error = strtolower($token_data['error'] ?? '');
+    $message = strtolower($token_data['message'] ?? '');
+
+    return $error === 'invalid_grant' || strpos($message, 'redirect_uri') !== false;
+}
+
+/**
+ * Obtener la URL real del callback (sin querystring).
+ */
+function obtener_redirect_uri_actual() {
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? 'www.quibu.cl';
+    $path = parse_url($_SERVER['REQUEST_URI'] ?? '/api/mp-callback.php', PHP_URL_PATH);
+
+    return $scheme . '://' . $host . $path;
 }
 
 /**
